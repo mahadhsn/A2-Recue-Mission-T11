@@ -11,6 +11,7 @@ import org.json.JSONTokener;
 public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
+    int i = 0;
 
     @Override
     public void initialize(String s) {
@@ -25,10 +26,24 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() {
+
         JSONObject decision = new JSONObject();
-        decision.put("action", "stop"); // we stop the exploration immediately
+        // stop after 100 actions
+        if (i == 100) {
+            decision.put("action", "stop");
+        }
+        else if (i % 2 == 0) { // fly when i is even
+            decision.put("action", "fly");
+        }
+        else { // scan when i is odd
+            decision.put("action", "scan");
+        }
+
         logger.info("** Decision: {}",decision.toString());
-        return decision.toString();
+
+        i++;  // increment the action counter
+
+        return decision.toString(); // i think touching this would break everything
     }
 
     @Override
