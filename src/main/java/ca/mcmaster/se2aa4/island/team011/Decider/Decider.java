@@ -1,9 +1,10 @@
-package ca.mcmaster.se2aa4.island.team011;
+package ca.mcmaster.se2aa4.island.team011.Decider;
 
 import org.json.JSONObject;
 
+
 // Decider determines next action drone should take and returns it
-public class Decider{
+public class Decider {
     private JSONObject decision;
 
     public Decider(){
@@ -17,4 +18,5 @@ public class Decider{
         return decision;
 
     }
+
 }

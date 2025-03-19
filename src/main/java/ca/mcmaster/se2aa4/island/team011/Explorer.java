@@ -7,6 +7,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
+import ca.mcmaster.se2aa4.island.team011.Decider.Decider;
 import eu.ace_design.island.bot.IExplorerRaid;
 
 public class Explorer implements IExplorerRaid {
