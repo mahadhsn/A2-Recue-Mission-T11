@@ -13,48 +13,37 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
     private Drone drone;
-    int i = 0;
+    private Decider decider = new Decider();
+    private JSONObject decision;
+    private Reciever reciever = new Reciever();
+
 
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
         JSONObject info = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Initialization info:\n {}",info.toString(2));
+        
         String direction = info.getString("heading");
         Integer batteryLevel = info.getInt("budget");
+        
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
 
-        this.drone = new Drone();
+        this.drone = new Drone(direction);
     }
 
     @Override
-    public String takeDecision() {
-
-        JSONObject decision = new JSONObject();
-        // stop after 100 actions
-        if (i == 100) {
-            decision.put("action", "stop");
-        }
-        else if (i % 2 == 0) { // fly when i is even
-            decision.put("action", "fly");
-
-            String droneResponse = drone.fly();
-            acknowledgeResults(droneResponse);
-        }
-        else { // scan when i is odd
-            decision.put("action", "scan");
-        }
+    public String takeDecision() { // determines next action drone should take and returns it
+        decision = decider.getDecision();
 
         logger.info("** Decision: {}",decision.toString());
 
-        i++;  // increment the action counter
-
-        return decision.toString(); // i think touching this would break everything
+        return decision.toString(); 
     }
 
     @Override
-    public void acknowledgeResults(String s) {
+    public void acknowledgeResults(String s) { // gets response after the decision action is executed
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
         logger.info("** Response received:\n"+response.toString(2));
         
@@ -66,6 +55,8 @@ public class Explorer implements IExplorerRaid {
         
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+
+        reciever.intakeResponse(response);
     }
 
     @Override

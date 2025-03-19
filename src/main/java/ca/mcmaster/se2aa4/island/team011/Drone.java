@@ -3,22 +3,29 @@ package ca.mcmaster.se2aa4.island.team011;
 import org.json.JSONObject;
 
 public class Drone {
+    private JSONObject decision;
     private Position position;
     private Direction heading;
     
-    public Drone(){
+    public Drone(String headingStr){
         position = new Position(0,0);
-        this.heading = Direction.EAST; // random starting dir for now
+        this.heading = Direction.valueOf(headingStr); 
     }
 
-    public String fly(){ // move drone forward
-        position.move(heading);
+    public JSONObject fly(){ // move drone forward
+        decision = new JSONObject();
+        decision.put("action", "fly");
 
-        return new JSONObject()
-                .put("cost", 1)
-                .put("status", "OK")
-                .put("extras", new JSONObject())
-                .toString();
+        position = position.move(heading); // update position
+
+        return decision;
+    }
+
+    public JSONObject scan(){
+        decision = new JSONObject();
+        decision.put("action", "scan");
+
+        return decision;
     }
 
 }
