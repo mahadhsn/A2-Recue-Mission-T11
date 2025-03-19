@@ -1,6 +1,7 @@
 package ca.mcmaster.se2aa4.island.team011;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -11,16 +12,18 @@ import org.apache.logging.log4j.Logger;
  * Position represents a position in the maze with x and y coordinates
  */
 
+// CAN REPLACE MOST OF IT WITH the bulit in Point of Java 
+
 public class Position {
     private static final Logger logger = LogManager.getLogger();
     private int x; // x coord
     private int y; // y coord
-    private static final HashMap<Direction, Position> MOVES = new HashMap<>(); // direction to move in mapped with Position offsets
+    private static final Map<Direction, Position> MOVES = new HashMap<>(); // direction to move in mapped with Position offsets
     static {
-        MOVES.put(Direction.NORTH, new Position(0, -1));
-        MOVES.put(Direction.EAST, new Position(1, 0));
-        MOVES.put(Direction.WEST, new Position(-1, 0));
-        MOVES.put(Direction.SOUTH, new Position(0, 1));
+        MOVES.put(Direction.N, new Position(0, -1));
+        MOVES.put(Direction.E, new Position(1, 0));
+        MOVES.put(Direction.W, new Position(-1, 0));
+        MOVES.put(Direction.S, new Position(0, 1));
     }
     
     public Position(int x, int y) {
