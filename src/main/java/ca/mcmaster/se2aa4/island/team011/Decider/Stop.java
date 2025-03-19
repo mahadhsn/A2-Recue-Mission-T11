@@ -2,13 +2,14 @@ package ca.mcmaster.se2aa4.island.team011.Decider;
 
 import org.json.JSONObject;
 
-// does not need to be abstract as it can only fly in one direction
-public class Fly {
+// only 1 stop action
+public class Stop {
+
     JSONObject action;
     
-    public Fly() {
+    public Stop() {
         action = new JSONObject();
-        action.put("action", "fly");
+        action.put("action", "stop");
     }
 
     public JSONObject getAction() {

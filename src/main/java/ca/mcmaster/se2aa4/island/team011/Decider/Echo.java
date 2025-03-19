@@ -1,5 +1,8 @@
 package ca.mcmaster.se2aa4.island.team011.Decider;
 
-public class Echo {
+import org.json.JSONObject;
+
+// must be abstract to be extended for each Heading
+public abstract class Echo {
     
 }
