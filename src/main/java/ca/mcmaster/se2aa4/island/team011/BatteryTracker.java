@@ -8,18 +8,34 @@ public class BatteryTracker {
     private int batteryLevel; //current battery level of drone
 
     public BatteryTracker(int batteryLevel){
-        this.batteryLevel = batteryLevel;
+        if (batteryLevel < 0){
+            throw new IllegalArgumentException("Battery cannot be negative.");
+        }
+        this.batteryLevel = batteryLevel; 
         logger.info("Battery initialized with {} units.", batteryLevel);
 
     }
 
-    public void consumeBattery(int amountUsed){
-        batteryLevel -= amountUsed;  //reduces battery by a certain amount depending on the drone action
-        logger.info("Battery level reduced by {}. Remaining: {}", amountUsed, batteryLevel);
+    public boolean hasEnoughBattery(int cost){
+        return batteryLevel >= cost;
+    }
+
+    public void consumeBattery(int cost){
+        if (hasEnoughBattery(cost)){
+            batteryLevel -= cost;
+            logger.info("Battery level reduced by {}. Remaining: {}", cost, batteryLevel);
+        } else{
+            logger.info("Not enough battery to perform this action. {} units remaining.", batteryLevel);
+        }
+        
     }
 
     public int getBatteryLevel(){
         return batteryLevel; 
+    }
+
+    public boolean isDepleted(){
+        return batteryLevel == 0;
     }
 
 }
