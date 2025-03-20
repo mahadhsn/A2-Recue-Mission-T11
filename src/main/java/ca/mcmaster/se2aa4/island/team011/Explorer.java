@@ -17,7 +17,7 @@ public class Explorer implements IExplorerRaid {
     private Decider decider = new Decider();
     private String decision;
     private Reciever reciever = new Reciever();
-
+    int i = 0;
 
     @Override
     public void initialize(String s) {
