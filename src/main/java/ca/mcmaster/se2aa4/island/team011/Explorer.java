@@ -12,10 +12,10 @@ import eu.ace_design.island.bot.IExplorerRaid;
 public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
-    private Drone drone;
-    private Decider decider = new Decider();
-    private JSONObject decision;
-    private Reciever reciever = new Reciever();
+    //private Drone drone;
+    //private Decider decider = new Decider();
+    //private Reciever reciever = new Reciever();
+    int i =0;
 
 
     @Override
@@ -30,15 +30,31 @@ public class Explorer implements IExplorerRaid {
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
 
-        this.drone = new Drone(direction);
+        //this.drone = new Drone(direction);
     }
 
     @Override
     public String takeDecision() { // determines next action drone should take and returns it
-        decision = decider.getDecision();
+        //decision = decider.getDecision();
+
+        JSONObject decision = new JSONObject();
+        //decision.put("action", "stop"); 
+//
+         // stop after 100 actions
+         if (i == 100) {
+             decision.put("action", "stop");
+         }
+         else if (i % 2 == 0) { // fly when i is even
+             decision.put("action", "fly");
+         }
+         else { // scan when i is odd
+             decision.put("action", "scan");
+         }
+ 
+ 
+         i++; 
 
         logger.info("** Decision: {}",decision.toString());
-
         return decision.toString(); 
     }
 
@@ -56,7 +72,7 @@ public class Explorer implements IExplorerRaid {
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
 
-        reciever.intakeResponse(response);
+        //reciever.intakeResponse(response);
     }
 
     @Override
