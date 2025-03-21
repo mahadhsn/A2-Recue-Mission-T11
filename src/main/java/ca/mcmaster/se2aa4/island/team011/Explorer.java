@@ -16,7 +16,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
     private final Logger logger = LogManager.getLogger();
     private Drone drone;
-    private Decider decider = new Decider(); // letting drone be decider for now
+    //private Decider decider = new Decider(); // letting drone be decider for now
     private JSONObject decision;
     private Reciever reciever;
 

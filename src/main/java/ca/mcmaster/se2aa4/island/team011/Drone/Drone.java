@@ -2,87 +2,101 @@ package ca.mcmaster.se2aa4.island.team011.Drone;
 
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
+import ca.mcmaster.se2aa4.island.team011.Decider.*;
+
 import org.json.JSONObject;
+
 
 public class Drone {
     private JSONObject decision;
     private JSONObject nextDecision;
-    private JSONObject parameter;
     private Position position;
-    private Direction heading;
+    private Direction direction;
     
     public Drone(String headingStr){
-        this.nextDecision = new JSONObject(); // temp - scan first
+        this.nextDecision = new JSONObject();
         nextDecision.put("action", "scan");
         this.decision = nextDecision;
-        this.position = new Position(0,0);
-        this.heading = Direction.valueOf(headingStr); 
+        this.position = new Position(1,1);
+        this.direction = Direction.valueOf(headingStr); 
     }
 
     public JSONObject fly(){ // move drone forward
-        decision = new JSONObject();
-        decision.put("action", "fly");
+        position = position.forward(direction); // update to new position
 
-        position = position.forward(heading); // update to new position
+        JSONObject decision = new Fly()
+                                .getAction();
 
         return decision;
     }
 
-    public JSONObject stop() {
-        decision = new JSONObject();
-        decision.put("action", "stop");
+    public JSONObject stop() { // stop drone
+        JSONObject decision = new Stop()
+                                .getAction();
         return decision;
     }
 
     // refactor heading later
     public JSONObject headingLeft() { // turn left
-        decision = new JSONObject();
-        parameter = new JSONObject();
+        position = position.forward(direction); // drone moves forward
+        direction = direction.turnLeft(); // then turns left
+        position = position.forward(direction); // and moves forward
 
-        position = position.forward(heading); // drone moves forward
-        heading = heading.turnLeft(); // then turns left
-        position = position.forward(heading); // and moves forward
-
-        decision.put("action", "heading");
-        parameter.put("direction", heading);
-        decision.put("parameters", parameter);
+        JSONObject decision = new Heading()
+                                .setParameter(direction)
+                                .getAction();
 
         return decision;
     }
 
     public JSONObject headingRight() { // turn right
-        decision = new JSONObject();
-        parameter = new JSONObject();
+        position = position.forward(direction); // drone moves forward
+        direction = direction.turnRight(); // then turns right
+        position = position.forward(direction); // and moves forward
 
-        position = position.forward(heading); // drone moves forward
-        heading = heading.turnRight(); // then turns right
-        position = position.forward(heading); // and moves forward
-
-        decision.put("action", "heading");
-        parameter.put("direction", heading);
-        decision.put("parameters", parameter);
+        JSONObject decision = new Heading()
+                                .setParameter(direction)
+                                .getAction();
 
         return decision;
     }
 
-    public JSONObject echo() {
-        decision.put("action", "echo");
-        parameter.put("direction", heading);
-        decision.put("parameters", parameter);
+    public JSONObject echoStraight() {
+        JSONObject decision = new Echo()
+                                .setParameter(direction)
+                                .getAction();
+
+        return decision;
+
+    }
+
+    public JSONObject echoLeft() {
+        JSONObject decision = new Echo()
+                                .setParameter(direction.turnLeft())
+                                .getAction();
+
+        return decision;
+
+    }
+
+    public JSONObject echoRight() {
+        JSONObject decision = new Echo()
+                                .setParameter(direction.turnRight())
+                                .getAction();
+
         return decision;
 
     }
 
     public JSONObject scan(){
-        decision = new JSONObject();
-        decision.put("action", "scan");
+        JSONObject decision = new Scan()
+                                .getAction();
         return decision;
     }
 
     public void setDecision(JSONObject decision) {
         this.nextDecision = decision;
     }
-
 
     public JSONObject getDecision() {
         return nextDecision;
@@ -92,12 +106,7 @@ public class Drone {
         return decision.optString("action", "");
     }
 
-    
-
     public String getHeading() {
-        return heading.toString();
+        return direction.toString();
     }
-
-    
-
 }

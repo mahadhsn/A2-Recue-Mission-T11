@@ -48,7 +48,7 @@ public class Reciever{
         // no ground found, alternate between scanning for ground and moving
         else if (drone.getPrevDecision().equals("heading")) {
             logger.info("Prev decision: {}", drone.getPrevDecision());
-            drone.setDecision(drone.echo());
+            drone.setDecision(drone.echoStraight());
         }
         else{ // move drone towards bottom right
             logger.info("Prev decision: {}", drone.getPrevDecision());
