@@ -93,14 +93,20 @@ public class Drone {
         return decision.optString("action", "");
     }
 
-    
-
     public String getHeading() {
         return heading.toString();
     }
 
     public String getCoords(){
         return position.toString();
+    }
+
+    public int getX(){
+        return position.getX();
+    }
+
+    public int getY(){
+        return position.getY();
     }
 
     

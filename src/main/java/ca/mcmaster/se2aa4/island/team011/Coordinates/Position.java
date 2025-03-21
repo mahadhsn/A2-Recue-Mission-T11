@@ -16,8 +16,8 @@ import org.apache.logging.log4j.Logger;
 
 public class Position {
     private static final Logger logger = LogManager.getLogger();
-    private float  x; // x coord
-    private float y; // y coord
+    private int  x; // x coord
+    private int y; // y coord
     private static final Map<Direction, Position> MOVES = new HashMap<>(); // direction to move in mapped with Position offsets
     static {
         MOVES.put(Direction.getNorth(), new Position(0, -1));
@@ -26,7 +26,7 @@ public class Position {
         MOVES.put(Direction.getSouth(), new Position(0, 1));
     }
     
-    public Position(float x, float y) {
+    public Position(int x, int y) {
         this.x = x;
         this.y = y;
     }
@@ -46,12 +46,12 @@ public class Position {
     }
 
     // getX returns x coord
-    public float getX() {
+    public int getX() {
         return this.x;
     }
 
     // getY returns y coord
-    public float getY() {
+    public int getY() {
         return this.y;
     }
 
