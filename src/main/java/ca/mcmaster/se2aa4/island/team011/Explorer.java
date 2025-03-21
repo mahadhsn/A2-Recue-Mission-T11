@@ -14,10 +14,9 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
     private Drone drone;
-    private Decider decider = new Decider();
-    private String decision;
-    private Reciever reciever = new Reciever();
-    int i = 0;
+    private Decider decider = new Decider(); // letting drone be decider for now
+    private JSONObject decision;
+    private Reciever reciever;
 
     @Override
     public void initialize(String s) {
@@ -32,22 +31,25 @@ public class Explorer implements IExplorerRaid {
         logger.info("Battery level is {}", batteryLevel);
 
         this.drone = new Drone(direction);
+        this.reciever = new Reciever();
     }
 
     @Override
     public String takeDecision() { // determines next action drone should take and returns it
-
-        decision = decider.getDecision();
+        decision = drone.getDecision();
 
         logger.info("** Decision: {}", decision);
         
-        return decision;
+        return decision.toString();
 
     }
 
     @Override
     public void acknowledgeResults(String s) { // gets response after the decision action is executed
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
+        
+        reciever.intakeResponse(response, drone);
+        
         logger.info("** Response received:\n"+response.toString(2));
         
         Integer cost = response.getInt("cost");
@@ -58,8 +60,6 @@ public class Explorer implements IExplorerRaid {
         
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
-
-        reciever.intakeResponse(response);
     }
 
     @Override
