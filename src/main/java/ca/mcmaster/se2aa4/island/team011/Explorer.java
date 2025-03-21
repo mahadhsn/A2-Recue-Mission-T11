@@ -16,7 +16,7 @@ public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
     private Drone drone;
-    private Decider decider = new Decider(); // letting drone be decider for now
+    //private Decider decider = new Decider(); // letting drone be decider for now
     private JSONObject decision;
     private Reciever reciever;
 
@@ -38,6 +38,7 @@ public class Explorer implements IExplorerRaid {
 
     @Override
     public String takeDecision() { // determines next action drone should take and returns it
+        
         decision = drone.getDecision();
 
         logger.info("** Decision: {}", decision);
