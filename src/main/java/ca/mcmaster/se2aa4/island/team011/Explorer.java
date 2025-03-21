@@ -13,10 +13,18 @@ import eu.ace_design.island.bot.IExplorerRaid;
 public class Explorer implements IExplorerRaid {
 
     private final Logger logger = LogManager.getLogger();
+<<<<<<< HEAD
     private Drone drone;
     private Decider decider = new Decider(); // letting drone be decider for now
     private JSONObject decision;
     private Reciever reciever;
+=======
+    //private Drone drone;
+    //private Decider decider = new Decider();
+    //private Reciever reciever = new Reciever();
+    int i =0;
+
+>>>>>>> 618022c35ffcf3b529be630cb16df0129a8f37a5
 
     @Override
     public void initialize(String s) {
@@ -30,18 +38,46 @@ public class Explorer implements IExplorerRaid {
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
 
+<<<<<<< HEAD
         this.drone = new Drone(direction);
         this.reciever = new Reciever();
+=======
+        //this.drone = new Drone(direction);
+>>>>>>> 618022c35ffcf3b529be630cb16df0129a8f37a5
     }
 
     @Override
     public String takeDecision() { // determines next action drone should take and returns it
+<<<<<<< HEAD
         decision = drone.getDecision();
 
         logger.info("** Decision: {}", decision);
         
         return decision.toString();
 
+=======
+        //decision = decider.getDecision();
+
+        JSONObject decision = new JSONObject();
+        //decision.put("action", "stop"); 
+//
+         // stop after 100 actions
+         if (i == 100) {
+             decision.put("action", "stop");
+         }
+         else if (i % 2 == 0) { // fly when i is even
+             decision.put("action", "fly");
+         }
+         else { // scan when i is odd
+             decision.put("action", "scan");
+         }
+ 
+ 
+         i++; 
+
+        logger.info("** Decision: {}",decision.toString());
+        return decision.toString(); 
+>>>>>>> 618022c35ffcf3b529be630cb16df0129a8f37a5
     }
 
     @Override
@@ -60,6 +96,11 @@ public class Explorer implements IExplorerRaid {
         
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+<<<<<<< HEAD
+=======
+
+        //reciever.intakeResponse(response);
+>>>>>>> 618022c35ffcf3b529be630cb16df0129a8f37a5
     }
 
     @Override
