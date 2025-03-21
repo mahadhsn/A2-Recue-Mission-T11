@@ -16,17 +16,17 @@ import org.apache.logging.log4j.Logger;
 
 public class Position {
     private static final Logger logger = LogManager.getLogger();
-    private int x; // x coord
-    private int y; // y coord
+    private float  x; // x coord
+    private float y; // y coord
     private static final Map<Direction, Position> MOVES = new HashMap<>(); // direction to move in mapped with Position offsets
     static {
-        MOVES.put(Direction.N, new Position(0, -1));
-        MOVES.put(Direction.E, new Position(1, 0));
-        MOVES.put(Direction.W, new Position(-1, 0));
-        MOVES.put(Direction.S, new Position(0, 1));
+        MOVES.put(Direction.getNorth(), new Position(0, -1));
+        MOVES.put(Direction.getEast(), new Position(1, 0));
+        MOVES.put(Direction.getWest(), new Position(-1, 0));
+        MOVES.put(Direction.getSouth(), new Position(0, 1));
     }
     
-    public Position(int x, int y) {
+    public Position(float x, float y) {
         this.x = x;
         this.y = y;
     }
@@ -46,12 +46,12 @@ public class Position {
     }
 
     // getX returns x coord
-    public int getX() {
+    public float getX() {
         return this.x;
     }
 
     // getY returns y coord
-    public int getY() {
+    public float getY() {
         return this.y;
     }
 

@@ -1,8 +1,9 @@
 package ca.mcmaster.se2aa4.island.team011.Drone;
 
+import org.json.JSONObject;
+
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
-import org.json.JSONObject;
 
 public class Drone {
     private JSONObject decision;
@@ -96,6 +97,10 @@ public class Drone {
 
     public String getHeading() {
         return heading.toString();
+    }
+
+    public String getCoords(){
+        return position.toString();
     }
 
     
