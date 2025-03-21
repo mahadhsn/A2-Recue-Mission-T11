@@ -8,17 +8,21 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import ca.mcmaster.se2aa4.island.team011.Decider.Decider;
+import ca.mcmaster.se2aa4.island.team011.Map.Reciever;
 import ca.mcmaster.se2aa4.island.team011.Map.*;
-import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
 import eu.ace_design.island.bot.IExplorerRaid;
+import ca.mcmaster.se2aa4.island.team011.Drone.*;
 
-public class Explorer implements IExplorerRaid {
+public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
     private final Logger logger = LogManager.getLogger();
     private Drone drone;
-    private Decider decider = new Decider(); // letting drone be decider for now
+    //private Decider decider = new Decider(); // letting drone be decider for now
     private JSONObject decision;
     private Reciever reciever;
+
+    private BatteryTracker batteryTracker;
+    private boolean batteryDepleted = false;
 
     @Override
     public void initialize(String s) {
@@ -34,10 +38,18 @@ public class Explorer implements IExplorerRaid {
 
         this.drone = new Drone(direction);
         this.reciever = new Reciever();
+
+        this.batteryTracker = new BatteryTracker(batteryLevel);
+        batteryTracker.setListener(this);
     }
 
     @Override
     public String takeDecision() { // determines next action drone should take and returns it
+        if (batteryDepleted){
+            logger.info("Battery is depleted.");
+            return new JSONObject().put("action", "stop").toString();
+        }
+        
         decision = drone.getDecision();
 
         logger.info("** Decision: {}", decision);
@@ -54,14 +66,26 @@ public class Explorer implements IExplorerRaid {
         
         logger.info("** Response received:\n"+response.toString(2));
         
-        Integer cost = response.getInt("cost");
-        logger.info("The cost of the action was {}", cost);
+        // Integer cost = response.getInt("cost");
+        // logger.info("The cost of the action was {}", cost);
+
+        Integer cost = batteryTracker.getCost(s);
+        batteryTracker.consumeBattery(cost);
         
         String status = response.getString("status");
         logger.info("The status of the drone is {}", status);
         
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+    }
+
+    @Override
+    public void onBatteryUpdate(int newBatteryLevel){
+        logger.info("Battery updated: {} remaining.", newBatteryLevel);
+        if (newBatteryLevel == 0) {
+            logger.info("Battery depleted. Stopping further actions.");
+            batteryDepleted = true;
+        }
     }
 
     @Override
