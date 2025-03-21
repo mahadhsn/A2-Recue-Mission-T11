@@ -31,8 +31,8 @@ public class Position {
         this.y = y;
     }
 
-    // move moves the position in the given direction and returns a new Position object
-    public Position move(Direction dir) {
+    // foward moves the position in the given direction and returns a new Position object
+    public Position forward(Direction dir) {
         Position offset = MOVES.get(dir);
         if (offset == null) {
             throw new IllegalStateException("Unexpected value: " + dir);
