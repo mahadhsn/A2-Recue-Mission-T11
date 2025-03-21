@@ -35,4 +35,20 @@ public enum Direction{
     public Direction turnLeft() {
         return leftTurns.get(this);
     }
+
+    public static Direction getNorth(){
+        return N;
+    }
+
+    public static Direction getSouth(){
+        return S;
+    }
+
+    public static Direction getWest(){
+        return W;
+    }
+
+    public static Direction getEast(){
+        return E;
+    }
 }

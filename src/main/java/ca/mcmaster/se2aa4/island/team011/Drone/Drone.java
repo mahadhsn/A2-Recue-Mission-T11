@@ -1,10 +1,14 @@
 package ca.mcmaster.se2aa4.island.team011.Drone;
 
+import org.json.JSONObject;
+
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
-import ca.mcmaster.se2aa4.island.team011.Decider.*;
-
-import org.json.JSONObject;
+import ca.mcmaster.se2aa4.island.team011.Decider.Echo;
+import ca.mcmaster.se2aa4.island.team011.Decider.Fly;
+import ca.mcmaster.se2aa4.island.team011.Decider.Heading;
+import ca.mcmaster.se2aa4.island.team011.Decider.Scan;
+import ca.mcmaster.se2aa4.island.team011.Decider.Stop;
 
 
 public class Drone {
@@ -109,4 +113,19 @@ public class Drone {
     public String getHeading() {
         return direction.toString();
     }
+
+    public String getCoords(){
+        return position.toString();
+    }
+
+    public int getX(){
+        return position.getX();
+    }
+
+    public int getY(){
+        return position.getY();
+    }
+
+    
+
 }
