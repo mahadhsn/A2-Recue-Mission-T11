@@ -1,5 +1,7 @@
-package ca.mcmaster.se2aa4.island.team011;
+package ca.mcmaster.se2aa4.island.team011.Drone;
 
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
 import org.json.JSONObject;
 
 public class Drone {

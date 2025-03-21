@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team011;
+package ca.mcmaster.se2aa4.island.team011.Coordinates;
 
 import java.util.HashMap;
 import java.util.Map;
