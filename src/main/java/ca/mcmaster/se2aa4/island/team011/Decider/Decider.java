@@ -22,6 +22,7 @@ public class Decider {
     private boolean stage11 = true;
     private boolean stage12 = false;
     private boolean stage13 = false;
+    private boolean stage14 = false;
 
     private boolean stage2 = false;
     private boolean stage21 = false;
@@ -60,14 +61,13 @@ public class Decider {
                 logger.info("Currently in stage 13");
                 logger.info("currently at position: " + drone.getCoords());
                 findLandSt13();
-            }
-        } else if (stage2) {  // Stage 2: Look for site
-            if (stage21) {
+            } else if (stage14) {
                 logger.info("Currently in stage 21");
                 logger.info("currently at position: " + drone.getCoords());
-                findSiteSt2();
+                findSiteSt14();
             }
-        } else if (stage3) {  // Stage 3: Stop actions
+            
+        } else if (stage2) {  // Stage 3: Stop actions
             logger.info("Currently in stage 3");
             logger.info("currently at position: " + drone.getCoords());
             drone.setDecision(drone.stop());
@@ -119,13 +119,12 @@ public class Decider {
 
     public void findLandSt13() { // Find land vertically
         if (verticalRangeToLand == 0) {
-            stage1 = false;
             stage13 = false;
-            stage2 = true;
-            stage21 = true;
+            stage14 = true;
             foundLand = true;
             drone.setDecision(drone.headingRight());
             decisionMade = true; // Mark decision as made
+            return;
         } 
         else {
             drone.setDecision(drone.fly());
@@ -135,12 +134,12 @@ public class Decider {
         }
     }
 
-    public void findSiteSt2() { // Find site
-        if (!reciever.overGround() && drone.getPrevDecision().equals("scan")) { // move to stage 3 if no site found
+    public void findSiteSt14() { // Find site
+        if (reciever.overGround() && drone.getPrevDecision().equals("scan")) { // move to stage 3 if no site found
             foundSite = true;
-            stage21 = false;
-            stage2 = false;
-            stage3 = true;
+            stage1 = false;
+            stage13 = false;
+            stage2 = true;
             drone.setDecision(drone.stop());
             decisionMade = true; // Mark decision as made
         } 
