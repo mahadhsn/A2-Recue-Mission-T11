@@ -2,13 +2,9 @@ package ca.mcmaster.se2aa4.island.team011.Drone;
 
 import org.json.JSONObject;
 
+import ca.mcmaster.se2aa4.island.team011.Actions.*;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
-import ca.mcmaster.se2aa4.island.team011.Decider.Echo;
-import ca.mcmaster.se2aa4.island.team011.Decider.Fly;
-import ca.mcmaster.se2aa4.island.team011.Decider.Heading;
-import ca.mcmaster.se2aa4.island.team011.Decider.Scan;
-import ca.mcmaster.se2aa4.island.team011.Decider.Stop;
 
 
 public class Drone {
@@ -92,7 +88,7 @@ public class Drone {
 
     }
 
-    public JSONObject scan(){
+    public JSONObject scan() {
         JSONObject decision = new Scan()
                                 .getAction();
         return decision;
@@ -125,7 +121,4 @@ public class Drone {
     public int getY(){
         return position.getY();
     }
-
-    
-
 }

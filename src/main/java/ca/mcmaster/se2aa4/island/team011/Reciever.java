@@ -8,7 +8,7 @@ import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
 import ca.mcmaster.se2aa4.island.team011.Map.POI;
 
 // Reciever breaks down info returned from decision action
-public class Reciever{
+public class Reciever {
     private static final Logger logger = LogManager.getLogger(Reciever.class);
     private JSONObject extras; // extras read from response
     private JSONArray biomes;

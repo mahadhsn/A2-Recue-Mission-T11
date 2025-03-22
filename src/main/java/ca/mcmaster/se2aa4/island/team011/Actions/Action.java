@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team011.Decider;
+package ca.mcmaster.se2aa4.island.team011.Actions;
 
 import org.json.JSONObject;
 

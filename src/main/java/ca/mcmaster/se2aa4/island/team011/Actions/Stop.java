@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team011.Decider;
+package ca.mcmaster.se2aa4.island.team011.Actions;
 
 // Stop action extends Action
 public class Stop extends Action {
