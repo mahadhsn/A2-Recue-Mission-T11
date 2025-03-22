@@ -1,27 +1,20 @@
 package ca.mcmaster.se2aa4.island.team011.Decider;
 
 
-import ca.mcmaster.se2aa4.island.team011.Coordinates.*;
 import ca.mcmaster.se2aa4.island.team011.Drone.*;
 import ca.mcmaster.se2aa4.island.team011.Reciever;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.json.JSONObject;
 
 
 // Decider determines next action drone should take and returns it
 public class Decider {
 
-    private JSONObject decision;
-    private JSONObject lastDecision;
     private final Logger logger = LogManager.getLogger();
 
     private Drone drone;
-    private Position position;
-    private Direction direction;
     private Reciever reciever;
 
-    private int actionCount = 0;
     private int verticalRangeToLand = 0;
 
     // Stage flags
@@ -43,10 +36,7 @@ public class Decider {
     private boolean decisionMade = false;
 
     public Decider(Drone drone, Reciever reciever) {
-        this.decision = new JSONObject();
         this.drone = drone;
-        this.position = drone.getPosition();
-        this.direction = drone.getDirection();
         this.reciever = reciever;
     }
 
@@ -146,7 +136,7 @@ public class Decider {
     }
 
     public void findSiteSt2() { // Find site
-        if (reciever.siteFound()) {
+        if (!reciever.siteFound()) {
             foundSite = true;
             stage21 = false;
             stage2 = false;
