@@ -136,7 +136,7 @@ public class Decider {
     }
 
     public void findSiteSt2() { // Find site
-        if (!reciever.siteFound()) {
+        if (!reciever.overGround() && drone.getPrevDecision().equals("scan")) { // move to stage 3 if no site found
             foundSite = true;
             stage21 = false;
             stage2 = false;
