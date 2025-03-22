@@ -60,11 +60,11 @@ public class Decider {
             } else if (stage13) {
                 logger.info("Currently in stage 13");
                 logger.info("currently at position: " + drone.getCoords());
-                findLandSt13();
+                findShoreSt13();
             } else if (stage14) {
                 logger.info("Currently in stage 21");
                 logger.info("currently at position: " + drone.getCoords());
-                findSiteSt14();
+                findLandSt14();
             }
             
         } else if (stage2) {  // Stage 3: Stop actions
@@ -117,7 +117,7 @@ public class Decider {
         } 
     }
 
-    public void findLandSt13() { // Find land vertically
+    public void findShoreSt13() { // Find land vertically
         if (verticalRangeToLand == 0) {
             stage13 = false;
             stage14 = true;
@@ -134,13 +134,12 @@ public class Decider {
         }
     }
 
-    public void findSiteSt14() { // Find site
+    public void findLandSt14() { // Find site
         if (reciever.overGround() && drone.getPrevDecision().equals("scan")) { // move to stage 3 if no site found
-            foundSite = true;
+            foundLand = true;
             stage1 = false;
             stage13 = false;
             stage2 = true;
-            drone.setDecision(drone.stop());
             decisionMade = true; // Mark decision as made
         } 
         if (drone.getPrevDecision().equals("fly")) {
@@ -157,5 +156,4 @@ public class Decider {
     public void resetDecisionFlag() {
         decisionMade = false;
     }
-
 }
