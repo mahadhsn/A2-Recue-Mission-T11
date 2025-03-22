@@ -1,4 +1,4 @@
-package ca.mcmaster.se2aa4.island.team011.Drone;
+package ca.mcmaster.se2aa4.island.team011.drone;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
