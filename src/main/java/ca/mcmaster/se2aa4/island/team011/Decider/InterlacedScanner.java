@@ -1,5 +1,6 @@
-package ca.mcmaster.se2aa4.island.team011.InterlacedScanner;
+package ca.mcmaster.se2aa4.island.team011.Decider;
 
+import ca.mcmaster.se2aa4.island.team011.Coordinates.*;
 import ca.mcmaster.se2aa4.island.team011.Drone.*;
 import ca.mcmaster.se2aa4.island.team011.Decider.*;
 import ca.mcmaster.se2aa4.island.team011.Reciever;

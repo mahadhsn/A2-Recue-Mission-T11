@@ -9,7 +9,6 @@ public class FindIsland extends Decider {
     public FindIsland(Drone drone, Reciever reciever) {
         super(drone, reciever);
     }
-
     
     public void findIsland() {
 
