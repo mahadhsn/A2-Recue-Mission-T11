@@ -1,16 +1,19 @@
-package ca.mcmaster.se2aa4.island.team011.InterlacedScanner;
+package ca.mcmaster.se2aa4.island.team011.Decider;
 
-import ca.mcmaster.se2aa4.island.team011.Drone.*;
-import ca.mcmaster.se2aa4.island.team011.Decider.*;
-import ca.mcmaster.se2aa4.island.team011.Reciever;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
+import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
+import ca.mcmaster.se2aa4.island.team011.Reciever;
+
 // InterlacedScanner is the decider that takes over when scanning for site
 public class InterlacedScanner extends Decider{
-    private final Logger logger = LogManager.getLogger();
+    private final Logger logger = LogManager.getLogger(InterlacedScanner.class);
 
     // map of scanning phases and queue of actions
     private static final Map<Direction, Position> MOVES = new HashMap<>();
@@ -25,11 +28,16 @@ public class InterlacedScanner extends Decider{
         super(drone, reciever);
     }
 
+    
     // FOR NOW - scanner will scan ENTIRE map
     @Override
     public void decide(){
         drone.setDecision(drone.stop());
     }
+
+
+
+    
 
 
 

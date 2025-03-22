@@ -26,6 +26,9 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
     private BatteryTracker batteryTracker;
     private boolean batteryDepleted = false;
 
+    public Explorer() {
+    }
+
     @Override
     public void initialize(String s) {
         logger.info("** Initializing the Exploration Command Center");
