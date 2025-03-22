@@ -10,7 +10,6 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 public class Drone {
-    private JSONObject prevDecision;
     private JSONObject decision;
     private JSONObject nextDecision;
     private Position position;
@@ -18,7 +17,6 @@ public class Drone {
     private final Logger logger = LogManager.getLogger();
     
     public Drone(String headingStr){
-        this.prevDecision = new JSONObject();
         this.nextDecision = new JSONObject();
         this.decision = new JSONObject();
         this.position = new Position(1,1);
@@ -99,20 +97,18 @@ public class Drone {
     }
 
     public void setDecision(JSONObject deci) {
-        prevDecision = decision;
-        decision = nextDecision;
         nextDecision = deci;
-        logger.info("Prev decision set to: {}", prevDecision.toString());
-        logger.info("Decision set to: {}", decision.toString());
+        logger.info("prev decision: {}", decision.toString()); 
         logger.info("Next decision set to: {}", nextDecision.toString());
     }
 
     public JSONObject getDecision() {
+        decision = nextDecision;
         return nextDecision;
     }
 
     public String getPrevDecision() {
-        return prevDecision.optString("action", "");
+        return decision.optString("action", "");
     }
 
     public String getHeading() {

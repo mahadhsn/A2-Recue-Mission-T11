@@ -50,6 +50,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
             return new JSONObject().put("action", "stop").toString();
         }
         
+        decider.resetDecisionFlag();
         decider.decide();
 
         decision = drone.getDecision();
