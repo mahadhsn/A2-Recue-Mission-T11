@@ -19,8 +19,8 @@ public class Reciever{
 
 
     }
-
-    public void intakeResponse(JSONObject response, Drone drone){
+    /*
+     *  public void intakeResponse(JSONObject response, Drone drone){
         JSONObject extras = response.getJSONObject("extras");
         if (extras.has("found")) { // bc found is only returned for scan, this is like if last action was scan
             int range = extras.getInt("range");
@@ -62,4 +62,6 @@ public class Reciever{
         }
        
     }
+     */
+   
 }

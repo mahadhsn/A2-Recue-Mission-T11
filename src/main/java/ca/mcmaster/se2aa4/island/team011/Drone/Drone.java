@@ -6,17 +6,21 @@ import ca.mcmaster.se2aa4.island.team011.Actions.*;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 public class Drone {
+    private JSONObject prevDecision;
     private JSONObject decision;
     private JSONObject nextDecision;
     private Position position;
     private Direction direction;
+    private final Logger logger = LogManager.getLogger();
     
     public Drone(String headingStr){
+        this.prevDecision = new JSONObject();
         this.nextDecision = new JSONObject();
-        nextDecision.put("action", "scan");
-        this.decision = nextDecision;
+        this.decision = new JSONObject();
         this.position = new Position(1,1);
         this.direction = Direction.valueOf(headingStr); 
     }
@@ -94,8 +98,13 @@ public class Drone {
         return decision;
     }
 
-    public void setDecision(JSONObject decision) {
-        this.nextDecision = decision;
+    public void setDecision(JSONObject deci) {
+        prevDecision = decision;
+        decision = nextDecision;
+        nextDecision = deci;
+        logger.info("Prev decision set to: {}", prevDecision.toString());
+        logger.info("Decision set to: {}", decision.toString());
+        logger.info("Next decision set to: {}", nextDecision.toString());
     }
 
     public JSONObject getDecision() {
@@ -103,7 +112,7 @@ public class Drone {
     }
 
     public String getPrevDecision() {
-        return decision.optString("action", "");
+        return prevDecision.optString("action", "");
     }
 
     public String getHeading() {
@@ -120,5 +129,13 @@ public class Drone {
 
     public int getY(){
         return position.getY();
+    }
+
+    public Position getPosition(){
+        return position;
+    }
+
+    public Direction getDirection(){
+        return direction;
     }
 }

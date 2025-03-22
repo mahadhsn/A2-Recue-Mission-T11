@@ -7,9 +7,9 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ca.mcmaster.se2aa4.island.team011.Map.*;
-import eu.ace_design.island.bot.IExplorerRaid;
 import ca.mcmaster.se2aa4.island.team011.Drone.*;
+import ca.mcmaster.se2aa4.island.team011.Decider.*;
+import eu.ace_design.island.bot.IExplorerRaid;
 
 public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
@@ -18,6 +18,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
     //private Decider decider = new Decider(); // letting drone be decider for now
     private JSONObject decision;
     private Reciever reciever;
+    private Decider decider;
 
     private BatteryTracker batteryTracker;
     private boolean batteryDepleted = false;
@@ -36,6 +37,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
         this.drone = new Drone(direction);
         this.reciever = new Reciever();
+        this.decider = new Decider(drone, reciever);
 
         this.batteryTracker = new BatteryTracker(batteryLevel);
         batteryTracker.setListener(this);
@@ -48,7 +50,11 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
             return new JSONObject().put("action", "stop").toString();
         }
         
+        decider.decide();
+
         decision = drone.getDecision();
+
+        //decision = decider.getDecision();
 
         logger.info("** Decision: {}", decision);
         

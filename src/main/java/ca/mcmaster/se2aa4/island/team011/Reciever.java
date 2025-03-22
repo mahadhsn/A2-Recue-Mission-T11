@@ -4,6 +4,7 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+
 import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
 import ca.mcmaster.se2aa4.island.team011.Map.POI;
 
@@ -31,15 +32,32 @@ public class Reciever {
     }
 
     // parse response for ECHO
-    public boolean facingGround(){ // returns whether drone is directly facing ground
+    // CHANGED THIS TO ONLY CHECK IF FACING GROUND AND NOT WORRY ABOUT DISTANCE
+    public boolean facingGround() { // returns whether drone is facing ground
         if (extras.has("found")) { 
-            int range = extras.getInt("range");
-            String found = extras.getString("found");
+            if (extras.has("range")) {
+                int range = extras.getInt("range");
+                logger.info("Range: {}", range);
+            }
+            else {
+                logger.warn("Range: 0");
+            }
 
-            logger.info("Range: {}", range);
+            String found = extras.getString("found");
             logger.info("Found: {}", found);
 
-            if(found.equals("GROUND") && range==0){ // stop drone if drone is directly next to ground
+            if(found.equals("GROUND")) { // return true if ground is found
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean overGround() {
+        if (extras.has("biomes")) {
+            JSONArray biomes = extras.getJSONArray("biomes");
+
+            if (biomes.length() == 1 && biomes.getString(0).equals("OCEAN")) {
                 return true;
             }
         }
