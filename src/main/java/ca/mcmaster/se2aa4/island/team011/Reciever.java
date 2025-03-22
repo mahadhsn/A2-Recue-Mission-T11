@@ -54,7 +54,7 @@ public class Reciever {
         if (extras.has("biomes")) {
             JSONArray biomes = extras.getJSONArray("biomes");
 
-            if (biomes.length() == 1 && biomes.getString(0).equals("OCEAN")) {
+            if (!(biomes.length() == 1 && biomes.getString(0).equals("OCEAN"))) {
                 return true;
             }
         }
