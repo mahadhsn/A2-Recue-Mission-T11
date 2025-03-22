@@ -3,8 +3,12 @@ package ca.mcmaster.se2aa4.island.team011.Decider;
 
 import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
 import ca.mcmaster.se2aa4.island.team011.Reciever;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
+import ca.mcmaster.se2aa4.island.team011.Reciever;
 
 
 // Decider determines next action drone should take and returns it
@@ -12,8 +16,8 @@ public class Decider {
 
     private final Logger logger = LogManager.getLogger();
 
-    private Drone drone;
-    private Reciever reciever;
+    protected Drone drone;
+    protected Reciever reciever;
 
     private int verticalRangeToLand = 0;
 
@@ -35,12 +39,12 @@ public class Decider {
 
     private boolean stage3 = false;
 
-    private boolean foundLand = false;
-    private boolean onLand = false;
-    private boolean foundSite = false;
+    protected boolean foundLand = false;
+    protected boolean onLand = false;
+    protected boolean foundSite = false;
 
     // Flag to track if decision is already made
-    private boolean decisionMade = false;
+    protected boolean decisionMade = false;
 
     public Decider(Drone drone, Reciever reciever) {
         this.drone = drone;

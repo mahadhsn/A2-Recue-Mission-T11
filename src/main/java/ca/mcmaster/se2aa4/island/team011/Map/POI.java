@@ -10,11 +10,11 @@ import java.util.Map;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 public class POI {
     private static final Logger logger = LogManager.getLogger(POI.class);
-    // map of creek ID and position
+    // map to store creek IDs and their position
     private Map<String, Position> creeks;
+    // emergency site ID and position
     private String siteID;
     private Position siteCoord;
 
@@ -22,6 +22,7 @@ public class POI {
         creeks = new HashMap<>();
     }
 
+    // update called after every response recieved for now
     public void update(JSONObject extras, Drone drone){
         updateCreeks(extras.getJSONArray("creeks"), drone);
         updateSite(extras.getJSONArray("sites"), drone);
@@ -42,7 +43,7 @@ public class POI {
     }
 
     public void updateSite(JSONArray siteList, Drone drone){
-        if(siteList.length() > 0){
+        if(siteList.length() > 0){ // only one emergency site per map
             siteID = siteList.getString(0);
             siteCoord = new Position(drone.getX(), drone.getY());
         }
@@ -52,8 +53,14 @@ public class POI {
         return String.join(", ", creeks.keySet());
     }
 
-    public String getSite(){ // return creeks as string
+    public String getSite(){ // return site as string
         return siteID + siteCoord.toString();
+    }
+
+    public String getResult(){
+        String result = "Creeks found: " + getCreeks() + "Emergency site found: " + getSite();
+        logger.info("Final report: {}", result);
+        return result;
     }
 
 }
