@@ -7,18 +7,21 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
-import ca.mcmaster.se2aa4.island.team011.Drone.*;
-import ca.mcmaster.se2aa4.island.team011.Decider.*;
+import ca.mcmaster.se2aa4.island.team011.Decider.Decider;
+import ca.mcmaster.se2aa4.island.team011.Drone.BatteryTrackListener;
+import ca.mcmaster.se2aa4.island.team011.Drone.BatteryTracker;
+import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
+import ca.mcmaster.se2aa4.island.team011.Map.POI;
 import eu.ace_design.island.bot.IExplorerRaid;
 
 public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
     private final Logger logger = LogManager.getLogger();
     private Drone drone;
-    //private Decider decider = new Decider(); // letting drone be decider for now
     private JSONObject decision;
     private Reciever reciever;
     private Decider decider;
+    private POI pois;
 
     private BatteryTracker batteryTracker;
     private boolean batteryDepleted = false;
@@ -38,6 +41,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         this.drone = new Drone(direction);
         this.reciever = new Reciever();
         this.decider = new Decider(drone, reciever);
+        this.pois = new POI();
 
         this.batteryTracker = new BatteryTracker(batteryLevel);
         batteryTracker.setListener(this);
@@ -54,8 +58,6 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         decider.decide();
         decision = drone.getDecision();
 
-        //JSONObject decision = new JSONObject().put("action", "scan");  //testing battery tracker 
-
         logger.info("** Decision: {}", decision);
         
         return decision.toString();
@@ -66,7 +68,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
     public void acknowledgeResults(String s) { // gets response after the decision action is executed
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
         
-        reciever.intakeResponse(response, drone);
+        reciever.intakeResponse(response, drone, pois);
         
         logger.info("** Response received:\n"+response.toString(2));
 
@@ -98,7 +100,9 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
     @Override
     public String deliverFinalReport() {
-        return "no creek found"; // should be identifier of the creek (inlet) where to send the rescue boat
+        String report = pois.getResult();
+        logger.info("Final report from POI found: {}", report);
+        return report;
     }
 
 }

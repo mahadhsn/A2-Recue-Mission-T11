@@ -4,7 +4,6 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-
 import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
 import ca.mcmaster.se2aa4.island.team011.Map.POI;
 
@@ -15,20 +14,18 @@ public class Reciever {
     private JSONArray biomes;
     private JSONArray creeks;
     private JSONArray sites;
-    private POI pois;
 
     public Reciever(){
         this.extras = new JSONObject();
         this.biomes = new JSONArray();
         this.creeks = new JSONArray(); 
         this.sites = new JSONArray();
-        this.pois = new POI();
     }
 
     // parse response for all actions
-    public void intakeResponse(JSONObject response, Drone drone){
+    public void intakeResponse(JSONObject response, Drone drone, POI poi){
         this.extras = response.getJSONObject("extras");
-        parseScan(drone);
+        parseScan(drone, poi);
     }
 
     // parse response for ECHO
@@ -57,7 +54,7 @@ public class Reciever {
         if (extras.has("biomes")) {
             JSONArray biomes = extras.getJSONArray("biomes");
 
-            if (biomes.length() == 1 && biomes.getString(0).equals("OCEAN")) {
+            if (!(biomes.length() == 1 && biomes.getString(0).equals("OCEAN"))) {
                 return true;
             }
         }
@@ -70,7 +67,7 @@ public class Reciever {
     }
 
     // parse response for SCAN
-    public void parseScan(Drone drone){
+    public void parseScan(Drone drone, POI pois){
         if (extras.has("biomes")) { 
             this.biomes = extras.getJSONArray("biomes");
             this.creeks = extras.getJSONArray("creeks");
