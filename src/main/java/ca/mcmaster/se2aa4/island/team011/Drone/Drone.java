@@ -137,4 +137,12 @@ public class Drone {
     public Direction getDirection(){
         return direction;
     }
+
+    public Direction getRightDirection() {
+        return direction.turnRight();
+    }
+
+    public Direction getLeftDirection() {
+        return direction.turnLeft();
+    }
 }
