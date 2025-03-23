@@ -27,16 +27,17 @@ public class Decider {
     // Flag to track if decision is already made
     protected boolean decisionMade = false;
 
-    private FindIsland findIsland;
+    private FindIsland findIsland = null;
 
     public Decider(Drone drone, Reciever reciever) {
         this.drone = drone;
         this.reciever = reciever;
-        findIsland = new FindIsland(drone, reciever);
     }
 
     public void decide() {
-        logger.info("Deciding island");
+        if (findIsland == null) {
+            findIsland = new FindIsland(drone, reciever);
+        }
         findIsland.decide();
     }
 

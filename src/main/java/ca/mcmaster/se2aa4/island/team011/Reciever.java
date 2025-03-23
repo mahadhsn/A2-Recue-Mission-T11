@@ -31,8 +31,12 @@ public class Reciever {
     // parse response for ECHO
     // CHANGED THIS TO ONLY CHECK IF FACING GROUND AND NOT WORRY ABOUT DISTANCE
     public boolean facingGround() { // returns whether drone is facing ground
-        if (extras.has("found")) { 
+        logger.debug("facing ground called");
+        logger.debug("checking if extras has found key");
+        if (extras.has("found")) {
+            logger.debug("checking if extras has range key");
             if (extras.has("range")) {
+                logger.debug("range found");
                 int range = extras.getInt("range");
                 logger.info("Range: {}", range);
             }
@@ -43,9 +47,8 @@ public class Reciever {
             String found = extras.getString("found");
             logger.info("Found: {}", found);
 
-            if(found.equals("GROUND")) { // return true if ground is found
-                return true;
-            }
+            // return true if ground is found
+            return found.equals("GROUND");
         }
         return false;
     }
@@ -54,16 +57,13 @@ public class Reciever {
         if (extras.has("biomes")) {
             JSONArray biomes = extras.getJSONArray("biomes");
 
-            if (!(biomes.length() == 1 && biomes.getString(0).equals("OCEAN"))) {
-                return true;
-            }
+            return !(biomes.length() == 1 && biomes.getString(0).equals("OCEAN"));
         }
         return false;
     }
 
     public int getRange(){ // range of echo scan - distance away from ground
-        int range = extras.getInt("range");
-        return range;
+        return extras.getInt("range");
     }
 
     // parse response for SCAN
@@ -78,14 +78,14 @@ public class Reciever {
 
     public boolean creekFound(){
         if (extras.has("creeks")) { 
-            return creeks.length() > 0;
+            return !creeks.isEmpty();
         }
         return false;
     }
 
     public boolean siteFound(){
         if (extras.has("sites")) { 
-            return sites.length() > 0;
+            return !sites.isEmpty();
         }
         return false;
     }

@@ -43,7 +43,7 @@ public class POI {
     }
 
     public void updateSite(JSONArray siteList, Drone drone){
-        if(siteList.length() > 0){ // only one emergency site per map
+        if(!siteList.isEmpty()){ // only one emergency site per map
             siteID = siteList.getString(0);
             siteCoord = new Position(drone.getX(), drone.getY());
         }
