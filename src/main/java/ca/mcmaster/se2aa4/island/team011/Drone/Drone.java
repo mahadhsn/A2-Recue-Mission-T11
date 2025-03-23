@@ -63,6 +63,17 @@ public class Drone {
         return decision;
     }
 
+    // assumes the direction isn't opposite to the drone
+    public JSONObject headingOnDirection(Direction direction) {
+        position = position.forward(direction);
+        this.direction = direction;
+        position = position.forward(direction);
+
+        return new Heading()
+                .setParameter(direction)
+                .getAction();
+    }
+
     public JSONObject echoStraight() {
         JSONObject decision = new Echo()
                                 .setParameter(direction)
@@ -70,6 +81,16 @@ public class Drone {
 
         return decision;
 
+    }
+
+    public JSONObject echoOnDirection(Direction direction) {
+        position = position.forward(direction);
+        this.direction = direction;
+        position = position.forward(direction);
+
+        return new Echo()
+                .setParameter(direction)
+                .getAction();
     }
 
     public JSONObject echoLeft() {

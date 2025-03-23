@@ -52,7 +52,7 @@ public class BatteryTracker {
     }
 
     public boolean isDepleted(){
-        return batteryLevel == 0;
+        return batteryLevel <= 40;
     }
 
 }
