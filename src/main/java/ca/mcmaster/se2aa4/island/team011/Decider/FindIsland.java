@@ -12,6 +12,8 @@ public class FindIsland extends Decider {
     private boolean groundFound = false;
     private boolean atGround = false;
 
+    private boolean madeFirstMove = false;
+
     private int state = 1;
     private int subState = 0;
     private int counter = 0;
@@ -27,84 +29,125 @@ public class FindIsland extends Decider {
         super(drone, reciever);
     }
 
+    // handles all actions
     @Override
-    public void decide() {
-
+    public void action() {
+        logger.debug("(action) State: {} | Sub-State: {} | Current Counter: {}", state, subState, counter);
         if (state == 1) {
-            initEcho();
+            logger.debug("initEchoAction called");
+            initEchoAction();
         }
         // state 2 could be skipped if land is found instantly
         else if (state == 2 && !groundFound) {
-            findLand();
+            logger.debug("findLandAction called");
+            findLandAction();
         }
         else if (state == 3) {
-            goToLand();
+            logger.debug("goToLandAction called");
+            goToLandAction();
         }
         else if (state == 4) {
             drone.setDecision(drone.stop());
         }
-        logger.info("Current State: {} \nCurrent sub state: {}\n Current Counter: {}", state, subState, counter);
+    }
+
+    // handles all decisions and state changes
+    @Override
+    public void decision() {
+        logger.debug("(decision) State: {} | Sub-State: {} | Current Counter: {}", state, subState, counter);
+        if (state == 1) {
+            logger.debug("initEchoDecision called");
+            initEchoDecision();
+        }
+        else if (state == 2 && !groundFound) {
+            logger.debug("findLandDecision called");
+            findLandDecision();
+        }
+        else if (state == 3) {
+            logger.debug("goToLand called");
+            goToLandDecision();
+        }
+        else if (state == 4) {
+            return;
+        }
     }
 
     // initial echo when drone is spawned
     // 3 states, each for an echo in each direction
     // if groundFound, store the rangeToLand
     // else, store the furthest distance to Out of Bounds
-    public void initEcho() {
+    public void initEchoAction() {
         if (subState == 0) {
-            directionToChange = drone.getDirection();
             drone.setDecision(drone.echoStraight());
-
-            if (reciever.facingGround()) {
-                int rangeToLand = reciever.getRange();
-                groundFound = true;
-                groundDirection = drone.getDirection();
-                state = 3;
-                return;
-            }
-            else {
-                int furthestRangeToOutOfBounds = reciever.getRange();
-            }
-            subState = 1;
         }
+
         else if (subState == 1) {
-            directionToChange = drone.getRightDirection();
             drone.setDecision(drone.echoRight());
 
+        }
+        else if (subState == 2) {
+            drone.setDecision(drone.echoLeft());
+        }
+    }
+
+    public void initEchoDecision() {
+        if (subState == 0) {
             if (reciever.facingGround()) {
-                int rangeToLand = reciever.getRange();
+                rangeToLand = reciever.getRange();
                 groundFound = true;
                 groundDirection = drone.getDirection();
                 state = 3;
+                logger.debug("Going to state 3");
+                resetSubState();
+            }
+            else {
+                furthestRangeToOutOfBounds = reciever.getRange(); // initialize this variable
+                directionToChange = drone.getDirection();
+                subState = 1;
+                logger.warn("Ground not found. Furthest range found: {} | Direction: {}", furthestRangeToOutOfBounds, directionToChange);
+                logger.debug("Going to subState 1");
+            }
+        }
+        else if (subState == 1) {
+            if (reciever.facingGround()) {
+                rangeToLand = reciever.getRange();
+                groundFound = true;
+                groundDirection = drone.getRightDirection();
+                state = 3;
+                logger.debug("Going to state 3");
+                resetSubState();
                 return;
             }
             else {
-                if (reciever.getRange() >= furthestRangeToOutOfBounds) {
+                if (reciever.getRange() > furthestRangeToOutOfBounds) { // from now only change if new variable is bigger
                     furthestRangeToOutOfBounds = reciever.getRange();
-                    directionToChange = drone.getDirection();
+                    directionToChange = drone.getRightDirection();
+                    logger.warn("Ground not found. Furthest range found: {} | Direction: {}", furthestRangeToOutOfBounds, directionToChange);
                 }
             }
             subState = 2;
+            logger.debug("Going to subState 2");
         }
         else if (subState == 2) {
-            directionToChange = drone.getLeftDirection();
-            drone.setDecision(drone.echoLeft());
-
             if (reciever.facingGround()) {
-                int rangeToLand = reciever.getRange();
+                rangeToLand = reciever.getRange();
                 groundFound = true;
-                groundDirection = drone.getDirection();
+                groundDirection = drone.getLeftDirection();
                 state = 3;
+                logger.debug("Going to state 3");
+                resetSubState();
                 return;
             }
             else {
-                if (reciever.getRange() >= furthestRangeToOutOfBounds) {
+                if (reciever.getRange() > furthestRangeToOutOfBounds) {
                     furthestRangeToOutOfBounds = reciever.getRange();
-                    directionToChange = drone.getDirection();
+                    directionToChange = drone.getLeftDirection();
+                    logger.warn("Ground not found. Furthest range found: {} | Direction: {}", furthestRangeToOutOfBounds, directionToChange);
                 }
             }
             // move to state 2 if land not found
             state = 2;
+            logger.debug("Going to subState 2");
             resetSubState();
         }
     }
@@ -112,28 +155,46 @@ public class FindIsland extends Decider {
     // used if isLand is not found instantly
     // echos left and right to see which side the island is on by only scanning in the further direction
     // used to get past having to echo in both directions
-    public void findLand() {
+    public void findLandAction() {
         if (subState == 0) {
-            drone.setDecision(drone.headingOnDirection(directionToChange));
-            subState = 1;
+            if (drone.getDirection() != directionToChange) {
+                drone.setDecision(drone.headingOnDirection(directionToChange));
+            }
         }
         else if (subState == 1) {
             drone.setDecision(drone.echoLeft());
-            subState = 2;
-            furthestRangeToOutOfBounds = reciever.getRange();
-            directionToEcho = drone.getLeftDirection();
+
         }
         else if (subState == 2) {
             drone.setDecision(drone.echoRight());
-            subState = 3;
-            if (reciever.getRange() >= furthestRangeToOutOfBounds) {
+        }
+        else if (subState == 3) {
+            flyAndEchoAction();
+        }
+    }
+
+    public void findLandDecision() {
+        if (subState == 0) {
+            subState = 1;
+            logger.debug("Going to subState 1");
+        }
+        else if (subState == 1) {
+            furthestRangeToOutOfBounds = reciever.getRange();
+            directionToEcho = drone.getLeftDirection();
+            subState = 2;
+            logger.debug("Going to subState 2");
+        }
+
+        else if (subState == 2) {
+            if (reciever.getRange() > furthestRangeToOutOfBounds) {
                 furthestRangeToOutOfBounds = reciever.getRange();
                 directionToEcho = drone.getRightDirection();
             }
+            subState = 3;
+            logger.debug("Going to subState 3");
         }
         else if (subState == 3) {
-            flyAndEcho();
-
+            flyAndEchoDecision();
             if (foundLand) {
                 resetSubState();
             }
@@ -141,40 +202,78 @@ public class FindIsland extends Decider {
     }
 
     // sub-method to be called within the findLand() method
-    public void flyAndEcho() {
+    public void flyAndEchoAction() {
         if (counter % 2 == 0) {
-            counter++;
             drone.setDecision(drone.echoOnDirection(directionToEcho));
+            groundDirection = directionToEcho;
+        }
+        else {
+            drone.setDecision(drone.fly());
+        }
+    }
+
+    public void flyAndEchoDecision() {
+        if (counter % 2 == 0) {
+            logger.debug("Counter: {}", counter);
+            counter++;
             if (reciever.facingGround()) {
-                int rangeToLand = reciever.getRange();
+                rangeToLand = reciever.getRange();
                 groundFound = true;
-                groundDirection = drone.getDirection();
                 state = 3;
+                resetSubState();
                 resetCounter();
                 return;
             }
         }
         else {
+            logger.debug("Counter: {}", counter);
             counter++;
-            drone.setDecision(drone.fly());
         }
     }
 
-    public void goToLand() {
-        if (subState == 0) {
+    public void goToLandAction() {
+        if (drone.getDirection() != groundDirection) {
             drone.setDecision(drone.headingOnDirection(groundDirection));
-            subState = 1;
+            logger.debug("Turning to ground");
+        }
+        else if (subState == 0) {
+            if (rangeToLand + 1 > 0) {
+                drone.setDecision(drone.fly());
+                rangeToLand--;
+                logger.debug("rangeToLand: {}", rangeToLand);
+            }
         }
         else if (subState == 1) {
-            if (rangeToLand >= 1) {
-                rangeToLand--;
-                drone.setDecision(drone.fly());
-            }
-            else {
-                drone.setDecision(drone.scan());
-                resetSubState();
-                state = 5;
+            drone.setDecision(drone.scan());
+        }
+    }
+
+    public void goToLandDecision() {
+        if (subState == 0) {
+            if (rangeToLand + 1 < 1) {
+                subState = 1;
             }
         }
+        else if (subState == 1) {
+            resetSubState();
+            state = 4;
+            logger.debug("Going to state 4");
+        }
+    }
+
+    public void resetSubState() {
+        subState = 0;
+    }
+
+    public void resetCounter() {
+        counter = 0;
+    }
+
+    public Drone getDroneInstance() {
+        return drone;
+    }
+
+    public Reciever getRecieverInstance() {
+        return reciever;
     }
 }

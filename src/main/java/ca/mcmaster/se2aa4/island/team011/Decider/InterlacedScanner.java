@@ -41,7 +41,7 @@ public class InterlacedScanner extends Decider{
     // FOR NOW - scanner will scan ENTIRE map
 
     @Override
-    public void decide(){
+    public void action(){
         if (phaseActions.containsKey(currentPhase)) {
             phaseActions.get(currentPhase).run(); // running corresponding method for current phase
         } else {

@@ -4,6 +4,7 @@ import java.io.StringReader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -24,6 +25,8 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
     private POI pois;
     private BatteryTracker batteryTracker;
     private boolean batteryDepleted = false;
+
+    private int counter = 0;
 
     public Explorer() {
     }
@@ -56,11 +59,17 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
             return new JSONObject().put("action", "stop").toString();
         }
 
-        decider.decide();
+        decider.action();
         decision = drone.getDecision();
+        counter++;
+
+        if (counter == 1) {
+            drone.setDecision(drone.scan());
+            decision = drone.getDecision();
+        }
 
         logger.info("** Decision: {}", decision);
-        
+
         return decision.toString();
     }
 
@@ -80,6 +89,10 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
+
+        if (counter > 1) {
+            decider.decision();
+        }
     }
 
     @Override

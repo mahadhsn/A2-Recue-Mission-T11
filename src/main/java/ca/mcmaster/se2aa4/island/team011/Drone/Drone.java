@@ -79,9 +79,6 @@ public class Drone {
     }
 
     public JSONObject echoOnDirection(Direction direction) {
-        position = position.forward(direction);
-        this.direction = direction;
-        position = position.forward(direction);
 
         return new Echo()
                 .setParameter(direction)
@@ -111,11 +108,12 @@ public class Drone {
 
     public void setDecision(JSONObject deci) {
         nextDecision = deci;
-        logger.info("prev decision: {}", decision.toString()); 
-        logger.info("Next decision set to: {}", nextDecision.toString());
+        logger.debug("Prev decision: {}", decision.toString());
+        logger.debug("Next decision set to: {}", nextDecision.toString());
     }
 
     public JSONObject getDecision() {
+        logger.debug("Decision made: {}", decision.toString());
         decision = nextDecision;
         return nextDecision;
     }

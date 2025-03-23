@@ -34,11 +34,17 @@ public class Decider {
         this.reciever = reciever;
     }
 
-    public void decide() {
+    // handles all actions
+    public void action() {
         if (findIsland == null) {
             findIsland = new FindIsland(drone, reciever);
         }
-        findIsland.decide();
+        findIsland.action();
+    }
+
+    // handles all decisions and state changes
+    public void decision() {
+        findIsland.decision();
     }
 
     public void resetSubState() {

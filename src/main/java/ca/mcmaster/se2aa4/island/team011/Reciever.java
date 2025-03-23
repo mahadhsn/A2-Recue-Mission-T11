@@ -36,24 +36,21 @@ public class Reciever {
     // parse response for ECHO
     // CHANGED THIS TO ONLY CHECK IF FACING GROUND AND NOT WORRY ABOUT DISTANCE
     public boolean facingGround() { // returns whether drone is facing ground
-        logger.debug("facing ground called");
-        logger.debug("checking if extras has found key");
         if (extras.has("found")) {
-            logger.debug("checking if extras has range key");
             if (extras.has("range")) {
-                logger.debug("range found");
                 int range = extras.getInt("range");
-                logger.info("Range: {}", range);
             }
             else {
                 logger.warn("Range: 0");
             }
 
             String found = extras.getString("found");
-            logger.info("Found: {}", found);
 
             // return true if ground is found
-            return found.equals("GROUND");
+            if (found.equals("GROUND")) {
+                logger.debug("Found GROUND");
+                return true;
+            }
         }
         return false;
     }
