@@ -1,10 +1,11 @@
 package ca.mcmaster.se2aa4.island.team011.Decider;
 
-import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
-import ca.mcmaster.se2aa4.island.team011.Reciever;
-import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
+import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
+import ca.mcmaster.se2aa4.island.team011.Reciever;
 
 // FindIsland class completes the first stage of looking for the emergency site: to find the island
 public class FindIsland extends Decider {
@@ -21,7 +22,7 @@ public class FindIsland extends Decider {
     private Direction directionToChange;
     private Direction directionToEcho;
     private Direction groundDirection;
-    private Logger logger = LogManager.getLogger();
+    private final Logger logger = LogManager.getLogger(FindIsland.class);
 
     public FindIsland(Drone drone, Reciever reciever) {
         super(drone, reciever);

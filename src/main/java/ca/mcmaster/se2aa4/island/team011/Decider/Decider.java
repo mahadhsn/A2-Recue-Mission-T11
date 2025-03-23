@@ -1,6 +1,5 @@
 package ca.mcmaster.se2aa4.island.team011.Decider;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -10,7 +9,6 @@ import ca.mcmaster.se2aa4.island.team011.Reciever;
 
 // Decider determines next action drone should take and returns it
 public class Decider {
-
     private final Logger logger = LogManager.getLogger(Decider.class);
 
     protected Drone drone;
@@ -28,6 +26,7 @@ public class Decider {
     protected boolean decisionMade = false;
 
     private FindIsland findIsland = null;
+    private InterlacedScanner scanner = null;
 
     public Decider(Drone drone, Reciever reciever) {
         this.drone = drone;
@@ -35,10 +34,18 @@ public class Decider {
     }
 
     public void decide() {
+        // STEP 1 - find island
         if (findIsland == null) {
             findIsland = new FindIsland(drone, reciever);
         }
-        findIsland.decide();
+        //findIsland.decide();
+
+        // STEP 2 - find emergency site w/ interlaced scanner
+        if (scanner == null) {
+            scanner = new InterlacedScanner(drone, reciever);
+        }
+        scanner.decide();
+
     }
 
     public void resetSubState() {
