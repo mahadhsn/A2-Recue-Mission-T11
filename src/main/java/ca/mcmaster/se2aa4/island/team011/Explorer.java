@@ -23,7 +23,6 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
     private Reciever reciever;
     private Decider decider;
     private POI pois;
-
     private BatteryTracker batteryTracker;
     private boolean batteryDepleted = false;
 
@@ -37,7 +36,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         logger.info("** Initialization info:\n {}",info.toString(2));
         
         String direction = info.getString("heading");
-        Integer batteryLevel = info.getInt("budget");
+        int batteryLevel = info.getInt("budget");
         
         logger.info("The drone is facing {}", direction);
         logger.info("Battery level is {}", batteryLevel);
@@ -57,15 +56,13 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
             logger.info("Battery is depleted.");
             return new JSONObject().put("action", "stop").toString();
         }
-        
-        decider.resetDecisionFlag();
+
         decider.decide();
         decision = drone.getDecision();
 
         logger.info("** Decision: {}", decision);
         
         return decision.toString();
-
     }
 
     @Override
@@ -73,10 +70,10 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
         
         reciever.intakeResponse(response, drone, pois);
-        
+
         logger.info("** Response received:\n"+response.toString(2));
 
-        Integer cost = batteryTracker.getCost(s);
+        int cost = batteryTracker.getCost(s);
         batteryTracker.consumeBattery(cost);
         
         String status = response.getString("status");

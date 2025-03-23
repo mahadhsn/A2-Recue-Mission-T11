@@ -36,8 +36,10 @@ public class InterlacedScanner extends Decider{
         phaseActions.put(Phase.STRAIGHT, this::straightScan);
         phaseActions.put(Phase.STOP, this::stop);
     }
-    
-    // FOR NOW - scanner will scan ENTIRE ma
+   
+
+    // FOR NOW - scanner will scan ENTIRE map
+
     @Override
     public void decide(){
         if (phaseActions.containsKey(currentPhase)) {
@@ -110,7 +112,7 @@ public class InterlacedScanner extends Decider{
 
 
 
-    
+
 
 
 

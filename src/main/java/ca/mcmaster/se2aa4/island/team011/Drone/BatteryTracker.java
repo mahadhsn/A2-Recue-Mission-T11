@@ -1,6 +1,8 @@
 package ca.mcmaster.se2aa4.island.team011.Drone;
 
+
 import java.io.StringReader;
+
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -12,7 +14,7 @@ public class BatteryTracker {
     private int batteryLevel; //current battery level of drone
     private BatteryTrackListener listener;
 
-    
+
     public BatteryTracker(int batteryLevel){
         if (batteryLevel < 0){ //not sure if we actually need this, I don't think its possible for it to happen
             throw new IllegalArgumentException("Battery cannot be negative.");
@@ -42,19 +44,19 @@ public class BatteryTracker {
         if (hasEnoughBattery(cost)){
             batteryLevel -= cost;
             logger.info("Battery level reduced by {}. Remaining: {}", cost, batteryLevel);
-            
+
             if (batteryLevel < 50 && !isDepleted){
                 isDepleted = true;
                 logger.info("Battery is too low. Returning to base.");
             }
-           
+
             if (listener != null){
                 listener.onBatteryUpdate(batteryLevel);
                 if (isDepleted){
                     listener.onBatteryDepleted();
                 }
             }
-            
+
         } else{
             logger.info("Not enough battery to perform this action. {} units remaining.", batteryLevel);
         }
