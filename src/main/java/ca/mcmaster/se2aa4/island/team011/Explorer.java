@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import ca.mcmaster.se2aa4.island.team011.Decider.Decider;
+import ca.mcmaster.se2aa4.island.team011.Decider.InterlacedScanner;
 import ca.mcmaster.se2aa4.island.team011.Drone.BatteryTrackListener;
 import ca.mcmaster.se2aa4.island.team011.Drone.BatteryTracker;
 import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
@@ -43,7 +44,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
         this.drone = new Drone(direction);
         this.reciever = new Reciever();
-        this.decider = new Decider(drone, reciever);
+        this.decider = new InterlacedScanner(drone, reciever);
         this.pois = new POI();
 
         this.batteryTracker = new BatteryTracker(batteryLevel);

@@ -62,8 +62,11 @@ public class Reciever {
     }
 
     public int getRange(){ // range of echo scan - distance away from ground
-        int range = extras.getInt("range");
-        return range;
+        if(extras.has("range")){
+            int range = extras.getInt("range");
+            return range;
+        }
+        return 0;
     }
 
     // parse response for SCAN
