@@ -1,13 +1,16 @@
 package ca.mcmaster.se2aa4.island.team011.Drone;
 
-import org.json.JSONObject;
-
-import ca.mcmaster.se2aa4.island.team011.Actions.*;
-import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
-import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
+
+import ca.mcmaster.se2aa4.island.team011.Actions.Echo;
+import ca.mcmaster.se2aa4.island.team011.Actions.Fly;
+import ca.mcmaster.se2aa4.island.team011.Actions.Heading;
+import ca.mcmaster.se2aa4.island.team011.Actions.Scan;
+import ca.mcmaster.se2aa4.island.team011.Actions.Stop;
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
 
 public class Drone {
     private JSONObject decision;
@@ -19,7 +22,7 @@ public class Drone {
     public Drone(String headingStr){
         this.nextDecision = new JSONObject();
         this.decision = new JSONObject();
-        this.position = new Position(1,1);
+        this.position = new Position(1, 1);
         this.direction = Direction.valueOf(headingStr); 
     }
 
