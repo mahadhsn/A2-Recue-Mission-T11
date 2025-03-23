@@ -30,7 +30,10 @@ public class FindIsland extends Decider {
         if (state == 1) {
             initEcho();
         }
-        else if (state == 2) {
+        else if (state == 2 && !groundFound) {
+
+        }
+        else if (state == 3) {
 
         }
 
@@ -52,6 +55,8 @@ public class FindIsland extends Decider {
                 int rangeToLand = reciever.getRange();
                 groundFound = true;
                 groundDirection = drone.getDirection();
+                state = 3;
+                return;
             }
             else {
                 int furthestRangeToOutOfBounds = reciever.getRange();
@@ -64,6 +69,8 @@ public class FindIsland extends Decider {
                 int rangeToLand = reciever.getRange();
                 groundFound = true;
                 groundDirection = drone.getDirection();
+                state = 3;
+                return;
             }
             else {
                 if (reciever.getRange() > furthestRangeToOutOfBounds) {
@@ -80,6 +87,8 @@ public class FindIsland extends Decider {
                 int rangeToLand = reciever.getRange();
                 groundFound = true;
                 groundDirection = drone.getDirection();
+                state = 3;
+                return;
             }
             else {
                 if (reciever.getRange() > furthestRangeToOutOfBounds) {
@@ -90,7 +99,6 @@ public class FindIsland extends Decider {
             state = 2;
             resetSubCounter();
         }
-
     }
     
     public void findLand() {
