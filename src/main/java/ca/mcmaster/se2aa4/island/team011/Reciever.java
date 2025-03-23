@@ -24,7 +24,12 @@ public class Reciever {
 
     // parse response for all actions
     public void intakeResponse(JSONObject response, Drone drone, POI poi){
-        this.extras = response.getJSONObject("extras");
+        if(response.has("extras")){
+            this.extras = response.getJSONObject("extras");
+        }
+        else{
+            logger.info("No extras recieved");
+        }
         parseScan(drone, poi);
     }
 
