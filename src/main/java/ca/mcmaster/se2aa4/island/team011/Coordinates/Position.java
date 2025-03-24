@@ -3,21 +3,10 @@ package ca.mcmaster.se2aa4.island.team011.Coordinates;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
-/**
- * Jeslyn Lu
- * lu196
- * Position represents a position in the maze with x and y coordinates
- */
-
-// CAN REPLACE MOST OF IT WITH the bulit in Point of Java 
-
+// Position represents a position on the map with x and y coordinates
 public class Position {
-    private static final Logger logger = LogManager.getLogger();
-    private int  x; // x coord
-    private int y; // y coord
+    private final int  x; // x coord
+    private final int y; // y coord
     private static final Map<Direction, Position> MOVES = new HashMap<>(); // direction to move in mapped with Position offsets
     static {
         MOVES.put(Direction.getNorth(), new Position(0, -1));
