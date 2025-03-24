@@ -4,7 +4,6 @@ import java.io.StringReader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -114,7 +113,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
     @Override
     public String deliverFinalReport() {
         String report = pois.getResult();
-        logger.info("Final report from POI found: {}", report);
+        logger.info("Final report:\n{}", report);
         return report;
     }
 

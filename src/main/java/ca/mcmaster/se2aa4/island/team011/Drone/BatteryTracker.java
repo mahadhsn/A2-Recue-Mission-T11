@@ -3,7 +3,6 @@ package ca.mcmaster.se2aa4.island.team011.Drone;
 
 import java.io.StringReader;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -43,7 +42,7 @@ public class BatteryTracker {
     public void consumeBattery(int cost){
         if (hasEnoughBattery(cost)){
             batteryLevel -= cost;
-            logger.info("Battery level reduced by {}. Remaining: {}", cost, batteryLevel);
+            //logger.info("Battery level reduced by {}. Remaining: {}", cost, batteryLevel);
 
             if (batteryLevel < 50 && !isDepleted){
                 isDepleted = true;
