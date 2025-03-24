@@ -67,6 +67,7 @@ public class InterlacedScanner extends Decider {
     @Override
     public void decision() {
         logger.debug("(decision) State: {} | Sub-State: {} | Fly Counter: {} | Turn Counter: {} | SubCounter: {} | rangeToLand: {} | U-Turn: {} | Special Turn Count: {}", state, subState, flyCounter, turnCounter, subCounter, rangeToLand, uTurnComplete, specialTurnCount);
+        
         if (state == 1) { // if state 1, go to state 2
             state = 2;
         }
@@ -138,11 +139,11 @@ public class InterlacedScanner extends Decider {
         if (!uTurnComplete) { // if U-turn is not complete, do a U-turn in the opposite direction of the last one
             if (lastUTurnWasLeft()) { // if last U-turn was left, do a Right U-turn
                 logger.debug("U turn left action called");
-                uTurnRightAction();
+                uTurnLeftAction();
             }
             else { // else do a Left U-turn
                 logger.debug("U turn right action called");
-                uTurnLeftAction();
+                uTurnRightAction();
             }
         }
     }
