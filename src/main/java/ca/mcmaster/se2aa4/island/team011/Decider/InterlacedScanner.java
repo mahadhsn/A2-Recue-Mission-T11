@@ -20,8 +20,6 @@ public class InterlacedScanner extends Decider{
 
     private Direction uTurnDirection = null; // initialize
 
-    private FindIsland findIsland = null;
-
     private int state = 1;
     private int subState = 0;
     private int turnCounter = 0;
@@ -29,6 +27,7 @@ public class InterlacedScanner extends Decider{
     private int subCounter = 0;
     private int rangeToLand = 0;
     private int specialTurnCount = 0;
+    private int specialFlyCount = 0;
 
     public InterlacedScanner(Drone drone, Reciever reciever){
         super(drone, reciever);
@@ -227,11 +226,14 @@ public class InterlacedScanner extends Decider{
         resetFlyCounter();
         uTurnDirection = drone.getUTurnDirection();
         subState = 0;
+        turnCounter++;
         if (isStranded()) {
             logger.warn("Drone Stranded! Going to Sub State 4");
             subState = 4;
+            if (specialTurnCount > 2) {
+                specialFlyCount = specialTurnCount/2;
+            }
         }
-        turnCounter++;
     }
 
     public void specialUTurnAction() { // begin special U Turn
@@ -271,6 +273,9 @@ public class InterlacedScanner extends Decider{
                 drone.setDecision(drone.headingRight());
             }
         }
+        else if (subCounter == 5) {
+            drone.setDecision(drone.fly());
+        }
     }
 
     public void specialUTurnDecision() {
@@ -279,6 +284,9 @@ public class InterlacedScanner extends Decider{
         }
         else if (subCounter == 1) {
             subCounter = 2;
+            if (specialTurnCount > 0) {
+                subCounter = 5;
+            }
         }
         else if (subCounter == 2) {
             subCounter = 3;
@@ -292,6 +300,14 @@ public class InterlacedScanner extends Decider{
             resetOceanCheckers();
             subState = 0;
             specialTurnCount++;
+        }
+        else if (subCounter == 5) {
+            if (specialFlyCount > 0) {
+                specialFlyCount--;
+            }
+            else {
+                subCounter = 2;
+            }
         }
     }
 

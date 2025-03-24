@@ -80,6 +80,8 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         reciever.intakeResponse(response, drone, pois);
         drone.setCreekFound(pois.creekFound());
         drone.setSiteFound(pois.siteFound());
+        drone.setAllCreeksFound(pois.allCreeksFound());
+
 
         logger.info("** Response received:\n"+response.toString(2));
 
@@ -118,5 +120,4 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         logger.info("Final report:\n{}", report);
         return report;
     }
-
 }
