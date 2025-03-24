@@ -78,6 +78,8 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         JSONObject response = new JSONObject(new JSONTokener(new StringReader(s)));
         
         reciever.intakeResponse(response, drone, pois);
+        drone.setCreekFound(pois.creekFound());
+        drone.setSiteFound(pois.siteFound());
 
         logger.info("** Response received:\n"+response.toString(2));
 

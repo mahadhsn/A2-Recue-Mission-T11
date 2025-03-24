@@ -103,7 +103,7 @@ public class InterlacedScanner extends Decider{
     public void flyAndScanDecision() {
         if (flyCounter % 2 == 0) { // if scan was called in action function
             if (reciever.overGround()) {
-                if (reciever.siteFound()) {
+                if (drone.getSiteFound() && drone.getCreekFound()) {
                     siteFound = true;
                     state = 3;
                     resetCounter();
