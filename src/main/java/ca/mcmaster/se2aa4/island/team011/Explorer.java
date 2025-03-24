@@ -4,7 +4,6 @@ import java.io.StringReader;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.apache.logging.log4j.core.LoggerContext;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
@@ -41,7 +40,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         int batteryLevel = info.getInt("budget");
         
         logger.info("The drone is facing {}", direction);
-        logger.info("Battery level is {}", batteryLevel);
+        //logger.info("Battery level is {}", batteryLevel);
 
         this.drone = new Drone(direction);
         this.reciever = new Reciever();
@@ -85,7 +84,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
         batteryTracker.consumeBattery(cost);
         
         String status = response.getString("status");
-        logger.info("The status of the drone is {}", status);
+        //logger.info("The status of the drone is {}", status);
         
         JSONObject extraInfo = response.getJSONObject("extras");
         logger.info("Additional information received: {}", extraInfo);
@@ -97,7 +96,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
     @Override
     public void onBatteryUpdate(int newBatteryLevel){
-        logger.info("Battery updated: {} remaining.", newBatteryLevel);
+        //logger.info("Battery updated: {} remaining.", newBatteryLevel);
         if (newBatteryLevel < 50 && !batteryDepleted) {
             batteryDepleted = true;
             onBatteryDepleted();
@@ -113,7 +112,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
     @Override
     public String deliverFinalReport() {
         String report = pois.getResult();
-        logger.info("Final report from POI found: {}", report);
+        logger.info("Final report:\n{}", report);
         return report;
     }
 

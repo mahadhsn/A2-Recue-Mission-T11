@@ -39,6 +39,7 @@ public class Reciever {
         if (extras.has("found")) {
             if (extras.has("range")) {
                 int range = extras.getInt("range");
+                //logger.info("Range: {}", range);
             }
             else {
                 logger.warn("Range: 0");
