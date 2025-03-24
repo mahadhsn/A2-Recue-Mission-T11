@@ -68,20 +68,18 @@ public class POI {
     }
 
     public String getSite(){ // return site as string
-        return siteID + " at " + siteCoord.toString();
+        return siteID;
     }
 
     public String getResult(){
-        return new StringBuilder()
-            .append("Creeks found: ")
-            .append(getCreeks())
-            .append("\nEmergency site found: ")
-            .append(getSite())
-            .append("\nClosest creek to the site: ")
-            .append(findClosestCreek())
-            .append("\n Creeks found: ")
-            .append(creeks.size())
-            .toString();
+        return "Creeks found:\n" +
+                getCreeks() +
+                "\nEmergency site found: " +
+                getSite() +
+                "\nClosest creek to the site: " +
+                findClosestCreek() +
+                "\nCreeks found: " +
+                creeks.size();
     }
 
     public String findClosestCreek(){
