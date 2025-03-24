@@ -2,6 +2,7 @@ package ca.mcmaster.se2aa4.island.team011.Coordinates;
 import java.util.HashMap;
 import java.util.Map;
 
+// Direction represents the direction the drone is facin
 public enum Direction{
         N,
         E,
@@ -44,6 +45,7 @@ public enum Direction{
         return leftTurns.get(this);
     }
 
+    // uTurn returns direction after a u turn
     public Direction uTurn() {
         return uTurns.get(this);
     }

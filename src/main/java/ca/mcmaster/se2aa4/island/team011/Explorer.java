@@ -54,7 +54,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
     @Override
     public String takeDecision() { // determines next action drone should take and returns it
         if (batteryDepleted){
-            logger.info("Battery is depleted.");
+            logger.debug("Battery is depleted.");
             return new JSONObject().put("action", "stop").toString();
         }
 
@@ -67,8 +67,8 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
             decision = drone.getDecision();
         }
 
-        logger.info("Position before decision: {}", drone.getPosition());
-        logger.info("** Decision: {}", decision);
+        logger.debug("Position before decision: {}", drone.getPosition());
+        logger.debug("** Decision: {}", decision);
 
         return decision.toString();
     }
@@ -101,7 +101,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
     @Override
     public void onBatteryUpdate(int newBatteryLevel){
-        logger.info("Battery updated: {} remaining.", newBatteryLevel);
+        logger.debug("Battery updated: {} remaining.", newBatteryLevel);
         if (newBatteryLevel < 50 && !batteryDepleted) {
             batteryDepleted = true;
             onBatteryDepleted();
@@ -111,7 +111,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
 
     @Override
     public void onBatteryDepleted(){
-        logger.info("Battery too low. Returning to base.");
+        logger.debug("Battery too low. Returning to base.");
     }
 
     @Override

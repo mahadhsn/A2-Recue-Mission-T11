@@ -10,10 +10,11 @@ import org.json.JSONObject;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Position;
 import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
 
+// POI stores the ID and Position of points of interest - creeks and site
 public class POI {
     private static final Logger logger = LogManager.getLogger(POI.class);
     // map to store creek IDs and their position
-    private Map<String, Position> creeks;
+    private final Map<String, Position> creeks;
     // emergency site ID and position
     private String siteID = "";
     private Position siteCoord;
@@ -35,7 +36,7 @@ public class POI {
                 logger.debug("Creek with ID {} is already found", creekID);
             }
             else{
-                logger.debug("Creek ID found", creekID);
+                logger.debug("Creek ID {} found", creekID);
                 // drone pos is pos of creek
                 Position creekCoord = new Position(drone.getX(), drone.getY());
                 creeks.put(creekID, creekCoord);
@@ -57,7 +58,7 @@ public class POI {
 
     public void updateSite(JSONArray siteList, Drone drone){
         if(!siteList.isEmpty()){ // only one emergency site per map
-            logger.debug("Site ID found", siteID);
+            logger.debug("Site ID {} found", siteID);
             siteID = siteList.getString(0);
             siteCoord = new Position(drone.getX(), drone.getY());
         }
@@ -72,14 +73,14 @@ public class POI {
     }
 
     public String getResult(){
-        return "Creeks found:\n" +
+        return  "Number of creeks found: " +
+                creeks.size() +
+                "\nCreeks found:\n" +
                 getCreeks() +
                 "\nEmergency site found: " +
                 getSite() +
                 "\nClosest creek to the site: " +
-                findClosestCreek() +
-                "\nCreeks found: " +
-                creeks.size();
+                findClosestCreek();
     }
 
     public String findClosestCreek(){
