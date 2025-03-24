@@ -15,6 +15,10 @@ public class InterlacedScanner extends Decider{
     private boolean siteFound = false;
     private boolean uTurnComplete = false;
 
+    private boolean oceanOnRight = false;
+    private boolean oceanOnLeft = false;
+    private boolean oceanOnTop = false;
+
     private Direction uTurnDirection = null; // initialize
 
     private FindIsland findIsland = null;
@@ -25,6 +29,7 @@ public class InterlacedScanner extends Decider{
     private int flyCounter = 0;
     private int subCounter = 0;
     private int rangeToLand = 0;
+    private int specialTurnCount = 0;
 
     public InterlacedScanner(Drone drone, Reciever reciever){
         super(drone, reciever);
@@ -32,11 +37,10 @@ public class InterlacedScanner extends Decider{
 
     @Override
     public void action() {
-        logger.debug("(action) State: {} | Sub-State: {} | Fly Counter: {} | Turn Counter: {} | SubCounter: {} | rangeToLand: {} | U-Turn: {}", state, subState, flyCounter, turnCounter, subCounter, rangeToLand, uTurnComplete);
-
-        if (state == 1) { // start by turning right as soon as encountering land
+        logger.debug("(action) State: {} | Sub-State: {} | Fly Counter: {} | Turn Counter: {} | SubCounter: {} | rangeToLand: {} | U-Turn: {} | Special Turn Count: {}", state, subState, flyCounter, turnCounter, subCounter, rangeToLand, uTurnComplete, specialTurnCount);
+        if (state == 1) { // start by turning right as soon as encountering land (minimal difference either way)
             uTurnDirection = drone.getLeftDirection();
-            turnRightAction();
+            drone.setDecision(drone.headingRight());
         }
         else if (state == 2) { // fly and scan as you go (scan first)
             if (subState == 0) {
@@ -51,15 +55,21 @@ public class InterlacedScanner extends Decider{
             else if (subState == 3) { // if land was found, go to it without scanning
                 flyToLandAction();
             }
+            else if (subState == 4) {
+                specialUTurnAction();
+            }
         }
         else if (state == 3) {
+            drone.setDecision(drone.stop());
+        }
+        if (specialTurnCount > 5) {
             drone.setDecision(drone.stop());
         }
     }
 
     @Override
     public void decision() {
-        logger.debug("(decision) State: {} | Sub-State: {} | Fly Counter: {} | Turn Counter: {} | SubCounter: {} | rangeToLand: {} | U-Turn: {}", state, subState, flyCounter, turnCounter, subCounter, rangeToLand, uTurnComplete);
+        logger.debug("(decision) State: {} | Sub-State: {} | Fly Counter: {} | Turn Counter: {} | SubCounter: {} | rangeToLand: {} | U-Turn: {} | Special Turn Count: {}", state, subState, flyCounter, turnCounter, subCounter, rangeToLand, uTurnComplete, specialTurnCount);
         if (state == 1) {
             state = 2;
         }
@@ -75,6 +85,9 @@ public class InterlacedScanner extends Decider{
             }
             else if (subState == 3) {
                 flyToLandDecision();
+            }
+            else if (subState == 4) {
+                specialUTurnDecision();
             }
         }
         else if (state == 3) {
@@ -92,16 +105,12 @@ public class InterlacedScanner extends Decider{
     }
 
     public void flyAndScanDecision() {
-
         if (flyCounter % 2 == 0) { // if scan was called in action function
-
             if (reciever.overGround()) {
-
                 if (reciever.siteFound()) {
                     siteFound = true;
                     state = 3;
                     resetCounter();
-                    resetFlyCounter();
                     resetSubState();
                 }
             }
@@ -109,7 +118,6 @@ public class InterlacedScanner extends Decider{
                 subState = 1;
             }
         }
-
         flyCounter++;
     }
 
@@ -119,8 +127,8 @@ public class InterlacedScanner extends Decider{
 
     public void checkForLandDecision() {
         if (reciever.facingGround()) {
-            subState = 3;
-            rangeToLand = reciever.getRange();
+            resetCounter();
+            subState = 0;
         }
         else {
             uTurnComplete = false;
@@ -131,7 +139,7 @@ public class InterlacedScanner extends Decider{
     public void uTurnAction() {
         logger.debug("U turn action called. Current direction: {} | U-Turn Direction: {}", drone.getDirection(), uTurnDirection);
         if (!uTurnComplete) {
-            if (turnCounter % 2 == 0) {
+            if (lastUTurnWasLeft()) {
                 uTurnLeftAction();
             }
             else {
@@ -143,9 +151,8 @@ public class InterlacedScanner extends Decider{
     public void uTurnDecision() {
         logger.debug("U turn decision called");
         if (!uTurnComplete) {
-            if (turnCounter % 2 == 0) {
+            if (lastUTurnWasLeft()) {
                 uTurnLeftDecision();
-                return;
             }
             else {
                 uTurnRightDecision();
@@ -156,54 +163,172 @@ public class InterlacedScanner extends Decider{
         }
     }
 
-    public void uTurnLeftAction() {
+    public void uTurnLeftAction() { // echo as you turn for a U-turn to check if drone is stranded
+
         logger.debug("U turn left action called");
-        drone.setDecision(drone.headingLeft());
+        if (subCounter == 0) {
+            drone.setDecision(drone.headingLeft());
+        }
+        else if (subCounter == 1) {
+            drone.setDecision(drone.echoRight());
+        }
+        else if (subCounter == 2) {
+            drone.setDecision(drone.echoLeft());
+        }
+        else if (subCounter == 3) {
+            drone.setDecision(drone.headingLeft());
+        }
+
     }
 
     public void uTurnLeftDecision() {
         if (subCounter == 0) {
             subCounter = 1;
         }
-        else {
-            logger.debug("U turn left complete");
-            if (drone.getDirection() == uTurnDirection) {
-                uTurnComplete = true;
-                resetSubCounter();
-                uTurnDirection = drone.getUTurnDirection();
-                turnCounter++;
-                subState = 0;
-                return;
+
+        else if (subCounter == 1) {
+            if (!reciever.facingGround()) {
+                oceanOnRight = true;
+                subCounter = 2;
+            }
+            else { // found ground so not stranded
+                resetOceanCheckers();
+                subCounter = 3; // skip to finishing U turn
+            }
+        }
+        else if (subCounter == 2) {
+            if (!reciever.facingGround()) { // will likely be true if previous one is true
+                oceanOnLeft = true;
             }
             else {
-                logger.warn("U Turn Left Failed! Current direction: {} | U-Turn Direction: {}", drone.getDirection(), uTurnDirection);
+                resetOceanCheckers();
             }
+            subCounter = 3;
+        }
+        else if (subCounter == 3) {
+            logger.debug("U turn left complete");
+            completeUTurn();
         }
     }
 
-    public void uTurnRightAction() {
+    public void uTurnRightAction() { // same as uTurnLeft but opposite
         logger.debug("U turn right action called");
-        drone.setDecision(drone.headingRight());
+        if (subCounter == 0) {
+            drone.setDecision(drone.headingRight());
+        }
+        else if (subCounter == 1) {
+            drone.setDecision(drone.echoLeft());
+        }
+        else if (subCounter == 2) {
+            drone.setDecision(drone.echoRight());
+        }
+        else if (subCounter == 3) {
+            drone.setDecision(drone.headingRight());
+        }
     }
 
-    public void uTurnRightDecision() {
+    public void uTurnRightDecision() { // same as uTurnLeft but opposite
         logger.debug("U turn right decision called");
         if (subCounter == 0) {
             subCounter = 1;
         }
-        else {
-            logger.debug("U turn right complete");
-            if (drone.getDirection() == uTurnDirection) {
-                uTurnComplete = true;
-                resetSubCounter();
-                uTurnDirection = drone.getUTurnDirection();
-                turnCounter++;
-                subState = 0;
-                return;
+
+        else if (subCounter == 1) {
+            if (!reciever.facingGround()) {
+                oceanOnLeft = true;
+                subCounter = 2;
+            }
+            else { // found ground so not stranded
+                resetOceanCheckers();
+                subCounter = 3; // skip to finishing U turn
+            }
+        }
+        else if (subCounter == 2) {
+            if (!reciever.facingGround()) { // will likely be true if previous one is true
+                oceanOnRight = true;
             }
             else {
-                logger.warn("U Turn Right Failed! Current direction: {} | U-Turn Direction: {}", drone.getDirection(), uTurnDirection);
+                resetOceanCheckers();
             }
+            subCounter = 3;
+        }
+        else if (subCounter == 3) {
+            logger.debug("U turn Right complete");
+            completeUTurn();
+        }
+    }
+
+    private void completeUTurn() {
+        uTurnComplete = true;
+        resetSubCounter();
+        resetFlyCounter();
+        uTurnDirection = drone.getUTurnDirection();
+        subState = 0;
+        if (isStranded()) {
+            logger.warn("Drone Stranded! Going to Sub State 4");
+            subState = 4;
+        }
+        turnCounter++;
+    }
+
+    public void specialUTurnAction() { // begin special U Turn
+        logger.warn("Special U turn action called");
+        if (subCounter == 0) {
+            if (lastUTurnWasLeftForSpecialUTurn()) {
+                drone.setDecision(drone.headingRight());
+            }
+            else {
+                drone.setDecision(drone.headingLeft());
+            }
+        }
+        else if (subCounter == 1) {
+            if (lastUTurnWasLeftForSpecialUTurn()) {
+                drone.setDecision(drone.headingLeft());
+            }
+            else {
+                drone.setDecision(drone.headingRight());
+            }
+        }
+        else if (subCounter == 2) {
+            if (lastUTurnWasLeftForSpecialUTurn()) {
+                drone.setDecision(drone.headingLeft());
+            }
+            else {
+                drone.setDecision(drone.headingRight());
+            }
+        }
+        else if (subCounter == 3) {
+            drone.setDecision(drone.fly());
+        }
+        else if (subCounter == 4) {
+            if (lastUTurnWasLeftForSpecialUTurn()) {
+                drone.setDecision(drone.headingLeft());
+            }
+            else {
+                drone.setDecision(drone.headingRight());
+            }
+        }
+    }
+
+    public void specialUTurnDecision() {
+        if (subCounter == 0) {
+            subCounter = 1;
+        }
+        else if (subCounter == 1) {
+            subCounter = 2;
+        }
+        else if (subCounter == 2) {
+            subCounter = 3;
+        }
+        else if (subCounter == 3) {
+            subCounter = 4;
+        }
+        else if (subCounter == 4) {
+            resetSubCounter();
+            resetFlyCounter();
+            resetOceanCheckers();
+            subState = 0;
+            specialTurnCount++;
         }
     }
 
@@ -224,14 +349,6 @@ public class InterlacedScanner extends Decider{
         }
     }
 
-    public void turnRightAction() {
-        drone.setDecision(drone.headingRight());
-    }
-
-    public void turnLeftAction() {
-        drone.setDecision(drone.headingLeft());
-    }
-
     public void resetSubState() {
         subState = 0;
     }
@@ -242,5 +359,22 @@ public class InterlacedScanner extends Decider{
 
     public void resetSubCounter() {
         subCounter = 0;
+    }
+
+    private boolean lastUTurnWasLeft() { // weird name but effective
+        return turnCounter % 2 == 0;
+    }
+
+    private boolean lastUTurnWasLeftForSpecialUTurn() { // counter gets updated before it can be called in special u turn
+        return turnCounter % 2 == 1;
+    }
+
+    public void resetOceanCheckers() {
+        oceanOnLeft = false;
+        oceanOnRight = false;
+    }
+
+    public boolean isStranded() {
+        return oceanOnLeft && oceanOnRight;
     }
 }

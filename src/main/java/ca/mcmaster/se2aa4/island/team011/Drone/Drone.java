@@ -27,6 +27,7 @@ public class Drone {
     }
 
     public JSONObject fly(){ // move drone forward
+        logger.debug("Drone fly");
         position = position.forward(direction); // update to new position
 
         return new Fly()
@@ -34,12 +35,14 @@ public class Drone {
     }
 
     public JSONObject stop() { // stop drone
+        logger.debug("Drone stop");
         return new Stop()
                 .getAction();
     }
 
     // refactor heading later
     public JSONObject headingLeft() { // turn left
+        logger.debug("Drone headingLeft");
         position = position.forward(direction); // drone moves forward
         direction = direction.turnLeft(); // then turns left
         position = position.forward(direction); // and moves forward
@@ -50,6 +53,7 @@ public class Drone {
     }
 
     public JSONObject headingRight() { // turn right
+        logger.debug("Drone headingRight");
         position = position.forward(direction); // drone moves forward
         direction = direction.turnRight(); // then turns right
         position = position.forward(direction); // and moves forward
@@ -61,6 +65,7 @@ public class Drone {
 
     // assumes the direction isn't opposite to the drone
     public JSONObject headingOnDirection(Direction direction) {
+        logger.debug("Drone headingOnDirection");
         position = position.forward(direction);
         this.direction = direction;
         position = position.forward(direction);
@@ -71,7 +76,7 @@ public class Drone {
     }
 
     public JSONObject echoStraight() {
-
+        logger.debug("Drone echoStraight");
         return new Echo()
                 .setParameter(direction)
                 .getAction();
@@ -79,14 +84,14 @@ public class Drone {
     }
 
     public JSONObject echoOnDirection(Direction direction) {
-
+        logger.debug("Drone echoOnDirection");
         return new Echo()
                 .setParameter(direction)
                 .getAction();
     }
 
     public JSONObject echoLeft() {
-
+        logger.debug("Drone echoLeft");
         return new Echo()
                 .setParameter(direction.turnLeft())
                 .getAction();
@@ -94,7 +99,7 @@ public class Drone {
     }
 
     public JSONObject echoRight() {
-
+        logger.debug("Drone echoRight");
         return new Echo()
                 .setParameter(direction.turnRight())
                 .getAction();
@@ -102,6 +107,7 @@ public class Drone {
     }
 
     public JSONObject scan() {
+        logger.debug("Drone scan");
         return new Scan()
                 .getAction();
     }
@@ -113,7 +119,6 @@ public class Drone {
     }
 
     public JSONObject getDecision() {
-        logger.debug("Decision made: {}", decision.toString());
         decision = nextDecision;
         return nextDecision;
     }
