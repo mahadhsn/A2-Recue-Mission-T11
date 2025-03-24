@@ -2,42 +2,72 @@
 
 package Coordinates {
     enum Direction {
+
     }
     class Position {
+
     }
 }
 
 package Drones {
     interface BatteryTrackListener {
+
     }
 
     class BatteryTracker {
     }
     
     class Drone {
+
     }
 }
 
 package Deciders {
     class Decider {
+
     }
     
     class FindIsland extends Decider {
+
     }
     
     class InterlacedScanner extends Decider {
+
     }
 }
 
 package Map {
     class POI {
+
     }
 }
 
+package Actions {
+    abstract class Action {
+
+    }
+
+    class Echo extends Action {
+
+    }
+
+    class Fly extends Action { }
+
+    class Heading extends Action {
+
+    }
+
+    class Scan extends Action { }
+
+    class Stop extends Action { }
+}
+
 class Explorer {
+
 }
 
 class Reciever {
+
 }
 
 class Runner {
@@ -59,5 +89,8 @@ Position *-up-> Direction
 
 Reciever <|-- POI
 Runner --> Explorer
+
+Drone *-up-> Action
+Decider .up-> Action
 
 @enduml

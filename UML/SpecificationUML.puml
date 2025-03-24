@@ -84,6 +84,30 @@ package Map {
     }
 }
 
+package Actions {
+    abstract class Action {
+        - JSONObject action
+        + getAction(): JSONObject
+        + actionToString(JSONObject): String
+    }
+
+    class Echo extends Action {
+        - JSONObject parameter
+        + setParameter(Direction): Echo
+    }
+
+    class Fly extends Action { }
+
+    class Heading extends Action {
+        - JSONObject parameter
+        + setParameter(Direction): Heading
+    }
+
+    class Scan extends Action { }
+
+    class Stop extends Action { }
+}
+
 class Explorer {
     - Drone drone
     - BatteryTracker batteryTracker
@@ -126,5 +150,8 @@ Position *-up-> Direction
 
 Reciever <|-- POI
 Runner --> Explorer
+
+Drone *-up-> Action
+Decider .up-> Action
 
 @enduml
