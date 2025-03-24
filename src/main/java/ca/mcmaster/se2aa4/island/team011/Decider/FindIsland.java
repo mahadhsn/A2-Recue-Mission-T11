@@ -24,6 +24,7 @@ public class FindIsland extends Decider {
     private Direction directionToChange;
     private Direction directionToEcho;
     private Direction groundDirection;
+    private final Logger logger = LogManager.getLogger(FindIsland.class);
 
     public FindIsland(Drone drone, Reciever reciever) {
         super(drone, reciever);
