@@ -18,6 +18,9 @@ public class Drone {
     private Position position;
     private Direction direction;
     private final Logger logger = LogManager.getLogger();
+
+    private boolean creekFound = false;
+    private boolean siteFound = false;
     
     public Drone(String headingStr){
         this.nextDecision = new JSONObject();
@@ -161,5 +164,20 @@ public class Drone {
 
     public Direction getUTurnDirection() {
         return direction.uTurn();
+    }
+
+    public void setCreekFound(boolean creekFound) {
+        this.creekFound = creekFound;
+    }
+
+    public void setSiteFound(boolean siteFound) {
+        this.siteFound = siteFound;
+    }
+
+    public boolean getCreekFound() {
+        return creekFound;
+    }
+    public boolean getSiteFound() {
+        return siteFound;
     }
 }

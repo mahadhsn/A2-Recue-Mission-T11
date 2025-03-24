@@ -67,8 +67,7 @@ public class Reciever {
 
     public int getRange(){ // range of echo scan - distance away from ground
         if(extras.has("range")){
-            int range = extras.getInt("range");
-            return range;
+            return extras.getInt("range");
         }
         return 0; // ERROR?
     }
@@ -84,17 +83,11 @@ public class Reciever {
     }
 
     public boolean creekFound(){
-        if (extras.has("creeks")) { 
             return !creeks.isEmpty();
-        }
-        return false;
     }
 
     public boolean siteFound(){
-        if (extras.has("sites")) { 
             return !sites.isEmpty();
-        }
-        return false;
     }
 
 }

@@ -15,7 +15,7 @@ public class POI {
     // map to store creek IDs and their position
     private Map<String, Position> creeks;
     // emergency site ID and position
-    private String siteID;
+    private String siteID = "";
     private Position siteCoord;
 
     public POI(){
@@ -41,6 +41,14 @@ public class POI {
                 creeks.put(creekID, creekCoord);
             }
         }
+    }
+
+    public boolean creekFound() {
+        return !creeks.isEmpty();
+    }
+
+    public boolean siteFound() {
+        return !siteID.isEmpty();
     }
 
     public void updateSite(JSONArray siteList, Drone drone){
