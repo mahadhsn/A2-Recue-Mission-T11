@@ -9,10 +9,10 @@ import org.apache.logging.log4j.Logger;
 // FindIsland class completes the first stage of looking for the emergency site: to find the island
 public class FindIsland extends Decider {
 
-    private boolean groundFound = false;
-    private boolean atGround = false;
+    private Logger logger = LogManager.getLogger();
 
-    private boolean madeFirstMove = false;
+    private boolean groundFound = false;
+    private boolean foundLand = false;
 
     private int state = 1;
     private int subState = 0;
@@ -23,7 +23,6 @@ public class FindIsland extends Decider {
     private Direction directionToChange;
     private Direction directionToEcho;
     private Direction groundDirection;
-    private Logger logger = LogManager.getLogger();
 
     public FindIsland(Drone drone, Reciever reciever) {
         super(drone, reciever);
@@ -47,7 +46,8 @@ public class FindIsland extends Decider {
             goToLandAction();
         }
         else if (state == 4) {
-            drone.setDecision(drone.stop());
+            foundLand = true;
+            return;
         }
     }
 
@@ -68,6 +68,7 @@ public class FindIsland extends Decider {
             goToLandDecision();
         }
         else if (state == 4) {
+            foundLand = true;
             return;
         }
     }
@@ -275,5 +276,9 @@ public class FindIsland extends Decider {
 
     public Reciever getRecieverInstance() {
         return reciever;
+    }
+
+    public boolean getIslandFound() {
+        return foundLand;
     }
 }

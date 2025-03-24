@@ -153,4 +153,8 @@ public class Drone {
     public Direction getLeftDirection() {
         return direction.turnLeft();
     }
+
+    public Direction getUTurnDirection() {
+        return direction.uTurn();
+    }
 }

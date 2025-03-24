@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
 import ca.mcmaster.se2aa4.island.team011.Reciever;
 
-
 // Decider determines next action drone should take and returns it
 public class Decider {
 
@@ -28,6 +27,7 @@ public class Decider {
     protected boolean decisionMade = false;
 
     private FindIsland findIsland = null;
+    private InterlacedScanner interlacedScanner = null;
 
     public Decider(Drone drone, Reciever reciever) {
         this.drone = drone;
@@ -39,14 +39,32 @@ public class Decider {
         if (findIsland == null) {
             findIsland = new FindIsland(drone, reciever);
         }
-        findIsland.action();
+        if (state == 0) {
+            findIsland.action();
+        }
+        else if (state == 1) {
+            interlacedScanner.action();
+        }
     }
 
     // handles all decisions and state changes
     public void decision() {
-        findIsland.decision();
+        if (state == 0) {
+            findIsland.decision();
+            if (findIsland.getIslandFound()) {
+                state = 1;
+                createInterlacedScanner();
+            }
+        }
+        else if (state == 1) {
+            interlacedScanner.decision();
+        }
     }
 
+    public void createInterlacedScanner() {
+        interlacedScanner = new InterlacedScanner(drone, reciever);
+        logger.debug("Interlaced Scanner created");
+    }
     public void resetSubState() {
         subState = 0;
     }

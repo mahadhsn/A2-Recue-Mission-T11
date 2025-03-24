@@ -1,118 +1,252 @@
 package ca.mcmaster.se2aa4.island.team011.Decider;
 
-import java.util.HashMap;
-import java.util.Map;
+import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
+import ca.mcmaster.se2aa4.island.team011.Reciever;
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
-import ca.mcmaster.se2aa4.island.team011.Decider.InterlacedScanner.Phase;
-import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
-import ca.mcmaster.se2aa4.island.team011.Reciever;
-
 // InterlacedScanner is the decider that takes over when scanning for site
 public class InterlacedScanner extends Decider{
-    private final Logger logger = LogManager.getLogger(InterlacedScanner.class);
-    private static Direction initialDir; // starting direction of drone when it gets to island/right before scanning. scan direction will be based off of this
-    private int scanRange;
-    protected enum Phase { // Enums should not have access modifiers (like private)
-        STRAIGHT,
-        UTURN_RIGHT,
-        UTURN_LEFT,
-        STOP
-    }
-    private Phase currentPhase;
-    private final Map<Phase, Runnable> phaseActions = new HashMap<>();
-    private int count; // counter to determine when to scan, avoids overlapping scans
+
+    private Logger logger = LogManager.getLogger();
+
+    private boolean siteFound = false;
+    private boolean uTurnComplete = false;
+
+    private Direction uTurnDirection = null; // initialize
+
+    private FindIsland findIsland = null;
+
+    private int state = 1;
+    private int subState = 0;
+    private int turnCounter = 0;
+    private int flyCounter = 0;
+    private int subCounter = 0;
+    private int rangeToLand = 0;
 
     public InterlacedScanner(Drone drone, Reciever reciever){
         super(drone, reciever);
-        InterlacedScanner.initialDir = drone.getDirection();
-        this.scanRange = 3; // scanner has 3x3 coverage (was already predetermined for us)
-        this.currentPhase = Phase.STRAIGHT;
-        this.count = scanRange;
-
-        phaseActions.put(Phase.STRAIGHT, this::straightScan);
-        phaseActions.put(Phase.STOP, this::stop);
     }
-   
-
-    // FOR NOW - scanner will scan ENTIRE map
 
     @Override
-    public void action(){
-        if (phaseActions.containsKey(currentPhase)) {
-            phaseActions.get(currentPhase).run(); // running corresponding method for current phase
-        } else {
-            logger.info("ERROR. Invalid phase {}.", currentPhase);
+    public void action() {
+        logger.debug("(action) State: {} | Sub-State: {} | Fly Counter: {} | Turn Counter: {} | SubCounter: {} | rangeToLand: {} | U-Turn: {}", state, subState, flyCounter, turnCounter, subCounter, rangeToLand, uTurnComplete);
+        if (state == 1) {
+            uTurnDirection = drone.getLeftDirection();
+            turnRightAction();
         }
-        logger.info("Current phase: {}", currentPhase);
-    }
-
-    public void straightScan(){ // only scans when going straight 
-        logger.info("Count is: {}", count);
-        logger.info("Prev decision: ",drone.getPrevDecision());
-        if(drone.getPrevDecision().equals("")){ // to solve issue of nothing starting until a scan has occured
-            logger.info("Prev decision: ",drone.getPrevDecision());
-            drone.setDecision(drone.echoStraight());
-        }
-        logger.info("facingground: ",reciever.facingGround());
-        logger.info("range: ",reciever.getRange());
-        while(reciever.facingGround() && reciever.getRange()!=0){ 
-            //logger.info("Starting straight scanning");
-            if(count == scanRange){
-                logger.info("Straight scan, scan");
-                drone.setDecision(drone.scan());
-                count = 0; // reset count
+        else if (state == 2) {
+            if (subState == 0) {
+                flyAndScanAction();
             }
-            else{
-                logger.info("Straight scanning, flying");
-                drone.setDecision(drone.fly());
-                count ++;
-            }  
-        } 
-        //setPhase();
+            else if (subState == 1) {
+                checkForLandAction();
+            }
+            else if (subState == 2 && !uTurnComplete) {
+                uTurnAction();
+            }
+            else if (subState == 3) {
+                flyToLandAction();
+            }
+        }
+        else if (state == 3) {
+            drone.setDecision(drone.stop());
+        }
     }
 
-    public void uturnLeft(){
-        if(count == scanRange){
-            drone.setDecision(drone.scan());
-            count = 0; // reset count
+    @Override
+    public void decision() {
+        logger.debug("(decision) State: {} | Sub-State: {} | Fly Counter: {} | Turn Counter: {} | SubCounter: {} | rangeToLand: {} | U-Turn: {}", state, subState, flyCounter, turnCounter, subCounter, rangeToLand, uTurnComplete);
+        if (state == 1) {
+            state = 2;
         }
-        else{
+        else if (state == 2) {
+            if (subState == 0) {
+                flyAndScanDecision();
+            }
+            else if (subState == 1) {
+                checkForLandDecision();
+            }
+            else if (subState == 2 && !uTurnComplete) {
+                uTurnDecision();
+            }
+            else if (subState == 3) {
+                flyToLandDecision();
+            }
+        }
+        else if (state == 3) {
+            return;
+        }
+    }
+
+    public void flyAndScanAction() {
+        if (flyCounter % 2 == 0) {
             drone.setDecision(drone.fly());
-            count ++;
-        } 
+        }
+        else {
+            drone.setDecision(drone.scan());
+        }
     }
 
-    public void stop(){ // stop scanning
-        logger.info("Site found {}", drone.getPosition().toString());
-        drone.setDecision(drone.stop());
+    public void flyAndScanDecision() {
+
+        if (flyCounter % 2 != 0) { // if scan was called in action function
+
+            if (reciever.overGround()) {
+
+                if (reciever.siteFound()) {
+                    siteFound = true;
+                    state = 3;
+                    resetCounter();
+                    resetFlyCounter();
+                    resetSubState();
+                    resetTurnCounter();
+                }
+            }
+            else {
+                subState = 1;
+            }
+        }
+
+        flyCounter++;
     }
 
-    public void setPhase(){ // getting next phase of interlaced scan
-        Direction dir = drone.getDirection();
-        if(reciever.siteFound()){ // stop if emergency site is found
-            this.currentPhase = Phase.STOP;
-        }
-        else if (currentPhase==Phase.STRAIGHT && dir==Direction.getEast()){
-            this.currentPhase = Phase.UTURN_LEFT;
-        }
-        else if (currentPhase==Phase.STRAIGHT && dir==Direction.getWest()){
-            this.currentPhase = Phase.UTURN_RIGHT;
-        }
-        else{
-            this.currentPhase = Phase.STRAIGHT;
-        }
-        count = scanRange; // reset count
+    public void checkForLandAction() {
+        drone.setDecision(drone.echoStraight());
     }
 
+    public void checkForLandDecision() {
+        resetFlyCounter();
+        if (reciever.facingGround()) {
+            subState = 3;
+            rangeToLand = reciever.getRange();
+            resetTurnCounter();
+        }
+        else {
+            uTurnComplete = false;
+            subState = 2;
+        }
+    }
+
+    public void uTurnAction() {
+        logger.debug("U turn action called. Current direction: {} | U-Turn Direction: {}", drone.getDirection(), uTurnDirection);
+        if (!uTurnComplete) {
+            if (turnCounter % 2 == 0) {
+                uTurnLeftAction();
+            }
+            else {
+                uTurnRightAction();
+            }
+        }
+    }
+
+    public void uTurnDecision() {
+        logger.debug("U turn decision called");
+        if (!uTurnComplete) {
+            if (turnCounter % 2 == 0) {
+                uTurnLeftDecision();
+                return;
+            }
+            else {
+                uTurnRightDecision();
+            }
+        }
+        else {
+            subState = 2;
+        }
+    }
+
+    public void uTurnLeftAction() {
+        logger.debug("U turn left action called");
+        drone.setDecision(drone.headingLeft());
+    }
+
+    public void uTurnLeftDecision() {
+        if (subCounter == 0) {
+            subCounter = 1;
+        }
+        else {
+            logger.debug("U turn left complete");
+            if (drone.getDirection() == uTurnDirection) {
+                uTurnComplete = true;
+                resetSubCounter();
+                uTurnDirection = drone.getUTurnDirection();
+                turnCounter++;
+                subState = 0;
+                return;
+            }
+            else {
+                logger.warn("U Turn Left Failed! Current direction: {} | U-Turn Direction: {}", drone.getDirection(), uTurnDirection);
+            }
+        }
+    }
+
+    public void uTurnRightAction() {
+        logger.debug("U turn right action called");
+        drone.setDecision(drone.headingRight());
+    }
+
+    public void uTurnRightDecision() {
+        logger.debug("U turn right decision called");
+        if (subCounter == 0) {
+            subCounter = 1;
+        }
+        else {
+            logger.debug("U turn right complete");
+            if (drone.getDirection() == uTurnDirection) {
+                uTurnComplete = true;
+                resetSubCounter();
+                uTurnDirection = drone.getUTurnDirection();
+                turnCounter++;
+                subState = 0;
+                return;
+            }
+            else {
+                logger.warn("U Turn Right Failed! Current direction: {} | U-Turn Direction: {}", drone.getDirection(), uTurnDirection);
+            }
+        }
+    }
+
+    public void flyToLandAction() {
+        if (rangeToLand + 1 > 0) {
+            drone.setDecision(drone.fly());
+            rangeToLand--;
+            logger.debug("rangeToLand: {}", rangeToLand);
+        }
+        else {
+            drone.setDecision(drone.scan());
+        }
+    }
+
+    public void flyToLandDecision() {
+        if (rangeToLand + 1 <= 0) {
+            subState = 0;
+        }
+    }
+
+    public void turnRightAction() {
+        drone.setDecision(drone.headingRight());
+    }
+
+    public void turnLeftAction() {
+        drone.setDecision(drone.headingLeft());
+    }
+
+    public void resetSubState() {
+        subState = 0;
+    }
+
+    public void resetFlyCounter() {
+        flyCounter = 0;
+    }
+
+    public void resetTurnCounter() {
+        turnCounter = 0;
+    }
+
+    public void resetSubCounter() {
+        subCounter = 0;
+    }
 }
-
-
-
-
-
-
-
