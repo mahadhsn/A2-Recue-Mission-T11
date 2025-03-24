@@ -1,11 +1,11 @@
 package ca.mcmaster.se2aa4.island.team011.Decider;
 
-import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
-import ca.mcmaster.se2aa4.island.team011.Reciever;
-import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+
+import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
+import ca.mcmaster.se2aa4.island.team011.Drone.Drone;
+import ca.mcmaster.se2aa4.island.team011.Reciever;
 
 // InterlacedScanner is the decider that takes over when scanning for site
 public class InterlacedScanner extends Decider{
@@ -77,7 +77,7 @@ public class InterlacedScanner extends Decider{
             }
         }
         else if (state == 3) {
-            return;
+   
         }
     }
 
@@ -147,7 +147,6 @@ public class InterlacedScanner extends Decider{
         if (!uTurnComplete) {
             if (turnCounter % 2 == 0) {
                 uTurnLeftDecision();
-                return;
             }
             else {
                 uTurnRightDecision();
@@ -175,7 +174,6 @@ public class InterlacedScanner extends Decider{
                 uTurnDirection = drone.getUTurnDirection();
                 turnCounter++;
                 subState = 0;
-                return;
             }
             else {
                 logger.warn("U Turn Left Failed! Current direction: {} | U-Turn Direction: {}", drone.getDirection(), uTurnDirection);
@@ -201,7 +199,6 @@ public class InterlacedScanner extends Decider{
                 uTurnDirection = drone.getUTurnDirection();
                 turnCounter++;
                 subState = 0;
-                return;
             }
             else {
                 logger.warn("U Turn Right Failed! Current direction: {} | U-Turn Direction: {}", drone.getDirection(), uTurnDirection);
@@ -234,6 +231,7 @@ public class InterlacedScanner extends Decider{
         drone.setDecision(drone.headingLeft());
     }
 
+    @Override
     public void resetSubState() {
         subState = 0;
     }
