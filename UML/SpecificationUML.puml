@@ -1,0 +1,130 @@
+@startuml
+
+package Coordinates {
+    enum Direction {
+        N, E, W, S
+        + turnRight()
+        + turnLeft()
+        + uTurn()
+    }
+    class Position {
+        - int x
+        - int y
+        + forward(Direction): Position
+        + getX(): int
+        + getY(): int
+    }
+}
+
+package Drones {
+    interface BatteryTrackListener {
+        + onBatteryUpdate(int)
+        + onBatteryDepleted()
+    }
+
+    class BatteryTracker {
+        - int batteryLevel
+        - boolean isDepleted
+        - BatteryTrackListener listener
+        + consumeBattery(int)
+        + hasEnoughBattery(int): boolean
+        + getCost(String): int
+    }
+    
+    class Drone {
+        - Position position
+        - Direction direction
+        + fly(): JSONObject
+        + stop(): JSONObject
+        + headingLeft(): JSONObject
+        + headingRight(): JSONObject
+        + headingOnDirection(Direction): JSONObject
+        + scan(): JSONObject
+        + echoStraight(): JSONObject
+        + echoOnDirection(Direction): JSONObject
+        + getRightDirection(): Direction
+        + getLeftDirection(): Direction
+        + getUTurnDirection(): Direction
+    }
+}
+
+package Deciders {
+    class Decider {
+        - Drone drone
+        - Reciever reciever
+        - int state
+        - int subState
+        - int counter
+        + action()
+        + decision()
+    }
+    
+    class FindIsland extends Decider {
+        - boolean groundFound
+        - boolean foundLand
+        + action()
+        + decision()
+        + getIslandFound(): boolean
+    }
+    
+    class InterlacedScanner extends Decider {
+        - boolean siteFound
+        - boolean uTurnComplete
+        + action()
+        + decision()
+    }
+}
+
+package Map {
+    class POI {
+        - Map<String, Position> creeks
+        - String siteID
+        - Position siteCoord
+        + update(JSONObject, Drone)
+    }
+}
+
+class Explorer {
+    - Drone drone
+    - BatteryTracker batteryTracker
+    - Reciever reciever
+    - POI pois
+    - int counter
+    + initialize(String)
+    + takeDecision(): String
+    + acknowledgeResults(String)
+    + onBatteryUpdate(int)
+    + onBatteryDepleted()
+}
+
+class Reciever {
+    - JSONObject extras
+    + intakeResponse(JSONObject, Drone, POI)
+    + facingGround(): boolean
+    + overGround(): boolean
+    + siteFound(): boolean
+    + creekFound(): boolean
+}
+
+class Runner {
+    + main(String[])
+}
+
+BatteryTracker --> BatteryTrackListener
+
+Explorer *-up-> Drone
+Explorer *-up-> BatteryTracker
+Explorer *-up-> Reciever
+Explorer *-up-> POI
+
+Decider .up-> Drone
+Decider .up-> Reciever
+
+Drone *-up-> Position  
+Drone .up-> Direction 
+Position *-up-> Direction  
+
+Reciever <|-- POI
+Runner --> Explorer
+
+@enduml
