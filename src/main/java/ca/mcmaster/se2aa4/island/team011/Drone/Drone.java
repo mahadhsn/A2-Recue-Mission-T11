@@ -19,6 +19,7 @@ public class Drone {
     private Direction direction;
     private final Logger logger = LogManager.getLogger();
 
+    private boolean allCreeksFound = false;
     private boolean creekFound = false;
     private boolean siteFound = false;
     
@@ -174,10 +175,17 @@ public class Drone {
         this.siteFound = siteFound;
     }
 
+    public void setAllCreeksFound(boolean allCreeksFound) {
+        this.allCreeksFound = allCreeksFound;
+    }
+
     public boolean getCreekFound() {
         return creekFound;
     }
     public boolean getSiteFound() {
         return siteFound;
+    }
+    public boolean getAllCreeksFound() {
+        return allCreeksFound;
     }
 }

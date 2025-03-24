@@ -47,6 +47,10 @@ public class POI {
         return !creeks.isEmpty();
     }
 
+    public boolean allCreeksFound() {
+        return creeks.size() == 10;
+    }
+
     public boolean siteFound() {
         return !siteID.isEmpty();
     }
@@ -75,6 +79,8 @@ public class POI {
             .append(getSite())
             .append("\nClosest creek to the site: ")
             .append(findClosestCreek())
+            .append("\n Creeks found: ")
+            .append(creeks.size())
             .toString();
     }
 
