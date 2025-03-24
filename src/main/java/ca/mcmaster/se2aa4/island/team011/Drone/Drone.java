@@ -29,44 +29,43 @@ public class Drone {
         this.direction = Direction.valueOf(headingStr); 
     }
 
-    public JSONObject fly(){ // move drone forward
+    public JSONObject fly(){ //Move drone forward
         logger.debug("Drone fly");
-        position = position.forward(direction); // update to new position
+        position = position.forward(direction); //Update to new position
 
         return new Fly()
                 .getAction();
     }
 
-    public JSONObject stop() { // stop drone
+    public JSONObject stop() { //Stopping drone
         logger.debug("Drone stop");
         return new Stop()
                 .getAction();
     }
 
-    // refactor heading later
-    public JSONObject headingLeft() { // turn left
+    public JSONObject headingLeft() { //Turn left
         logger.debug("Drone headingLeft");
-        position = position.forward(direction); // drone moves forward
-        direction = direction.turnLeft(); // then turns left
-        position = position.forward(direction); // and moves forward
+        position = position.forward(direction); //Drone moves forward
+        direction = direction.turnLeft(); //Then turns left
+        position = position.forward(direction); //Then moves forward
 
         return new Heading()
                 .setParameter(direction)
                 .getAction();
     }
 
-    public JSONObject headingRight() { // turn right
+    public JSONObject headingRight() { //Turn right
         logger.debug("Drone headingRight");
-        position = position.forward(direction); // drone moves forward
-        direction = direction.turnRight(); // then turns right
-        position = position.forward(direction); // and moves forward
+        position = position.forward(direction); //Drone moves forward
+        direction = direction.turnRight(); //Then turns right
+        position = position.forward(direction); //Then moves forward
 
         return new Heading()
                 .setParameter(direction)
                 .getAction();
     }
 
-    // assumes the direction isn't opposite to the drone
+    //Assumes the direction isn't opposite to the drone
     public JSONObject headingOnDirection(Direction direction) {
         logger.debug("Drone headingOnDirection");
         position = position.forward(direction);

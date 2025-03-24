@@ -32,10 +32,10 @@ public class POI {
         for(int i=0; i<creekList.length(); i++){
             String creekID = creekList.getString(i);
             if(creeks.containsKey(creekID)){
-                logger.info("Creek with ID {} is already found", creekID);
+                logger.debug("Creek with ID {} is already found", creekID);
             }
             else{
-                logger.info("Creek ID found", creekID);
+                logger.debug("Creek ID found", creekID);
                 // drone pos is pos of creek
                 Position creekCoord = new Position(drone.getX(), drone.getY());
                 creeks.put(creekID, creekCoord);
@@ -53,7 +53,7 @@ public class POI {
 
     public void updateSite(JSONArray siteList, Drone drone){
         if(!siteList.isEmpty()){ // only one emergency site per map
-            logger.info("Site ID found", siteID);
+            logger.debug("Site ID found", siteID);
             siteID = siteList.getString(0);
             siteCoord = new Position(drone.getX(), drone.getY());
         }
