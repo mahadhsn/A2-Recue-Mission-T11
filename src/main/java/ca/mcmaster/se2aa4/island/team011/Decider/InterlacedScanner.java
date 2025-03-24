@@ -14,6 +14,8 @@ public class InterlacedScanner extends Decider{
 
     private boolean siteFound = false;
     private boolean uTurnComplete = false;
+    private boolean oceanOnRight = false;
+    private boolean oceanOnLeft = false;
 
     private Direction uTurnDirection = null; // initialize
 
@@ -38,17 +40,20 @@ public class InterlacedScanner extends Decider{
             turnRightAction();
         }
         else if (state == 2) {
-            if (subState == 0) {
+            if (subState == 0) { // fly and scan
                 flyAndScanAction();
             }
-            else if (subState == 1) {
+            else if (subState == 1) { // echo for land
                 checkForLandAction();
             }
-            else if (subState == 2 && !uTurnComplete) {
+            else if (subState == 2 && !uTurnComplete) { // u turn
                 uTurnAction();
             }
-            else if (subState == 3) {
+            else if (subState == 3) { // fly to echoed land
                 flyToLandAction();
+            }
+            else if (subState == 4) {
+                drone.setDecision(drone.stop());
             }
         }
         else if (state == 3) {
@@ -102,7 +107,6 @@ public class InterlacedScanner extends Decider{
                     resetCounter();
                     resetFlyCounter();
                     resetSubState();
-                    resetTurnCounter();
                 }
             }
             else {
@@ -122,9 +126,24 @@ public class InterlacedScanner extends Decider{
         if (reciever.facingGround()) {
             subState = 3;
             rangeToLand = reciever.getRange();
-            resetTurnCounter();
+            if (turnCounter % 2 == 0 && uTurnComplete) {
+                oceanOnRight = false;
+            }
+            else if (turnCounter % 2 == 1 && uTurnComplete) {
+                oceanOnLeft = false;
+            }
         }
         else {
+            if (turnCounter % 2 == 0 && uTurnComplete) {
+                oceanOnRight = true;
+            }
+            else if (turnCounter % 2 == 1 && uTurnComplete) {
+                oceanOnLeft = true;
+            }
+
+            if (oceanOnRight && oceanOnLeft && uTurnComplete) {
+                subState = 4;
+            }
             uTurnComplete = false;
             subState = 2;
         }
@@ -210,7 +229,7 @@ public class InterlacedScanner extends Decider{
     }
 
     public void flyToLandAction() {
-        if (rangeToLand + 1 > 0) {
+        if (rangeToLand + 1 > 1) {
             drone.setDecision(drone.fly());
             rangeToLand--;
             logger.debug("rangeToLand: {}", rangeToLand);
@@ -221,7 +240,7 @@ public class InterlacedScanner extends Decider{
     }
 
     public void flyToLandDecision() {
-        if (rangeToLand + 1 <= 0) {
+        if (rangeToLand + 1 <= 1) {
             subState = 0;
         }
     }
@@ -240,10 +259,6 @@ public class InterlacedScanner extends Decider{
 
     public void resetFlyCounter() {
         flyCounter = 0;
-    }
-
-    public void resetTurnCounter() {
-        turnCounter = 0;
     }
 
     public void resetSubCounter() {
