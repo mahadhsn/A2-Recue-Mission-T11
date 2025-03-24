@@ -68,6 +68,7 @@ public class Explorer implements IExplorerRaid, BatteryTrackListener {
             decision = drone.getDecision();
         }
 
+        logger.info("Position before decision: {}", drone.getPosition());
         logger.info("** Decision: {}", decision);
 
         return decision.toString();

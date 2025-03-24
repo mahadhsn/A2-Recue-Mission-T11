@@ -33,21 +33,22 @@ public class InterlacedScanner extends Decider{
     @Override
     public void action() {
         logger.debug("(action) State: {} | Sub-State: {} | Fly Counter: {} | Turn Counter: {} | SubCounter: {} | rangeToLand: {} | U-Turn: {}", state, subState, flyCounter, turnCounter, subCounter, rangeToLand, uTurnComplete);
-        if (state == 1) {
+
+        if (state == 1) { // start by turning right as soon as encountering land
             uTurnDirection = drone.getLeftDirection();
             turnRightAction();
         }
-        else if (state == 2) {
+        else if (state == 2) { // fly and scan as you go (scan first)
             if (subState == 0) {
                 flyAndScanAction();
             }
-            else if (subState == 1) {
+            else if (subState == 1) { // if encounter water, echo forward in case there is land
                 checkForLandAction();
             }
-            else if (subState == 2 && !uTurnComplete) {
+            else if (subState == 2 && !uTurnComplete) { // if no land, pop a U-ie
                 uTurnAction();
             }
-            else if (subState == 3) {
+            else if (subState == 3) { // if land was found, go to it without scanning
                 flyToLandAction();
             }
         }
@@ -83,16 +84,16 @@ public class InterlacedScanner extends Decider{
 
     public void flyAndScanAction() {
         if (flyCounter % 2 == 0) {
-            drone.setDecision(drone.fly());
+            drone.setDecision(drone.scan());
         }
         else {
-            drone.setDecision(drone.scan());
+            drone.setDecision(drone.fly());
         }
     }
 
     public void flyAndScanDecision() {
 
-        if (flyCounter % 2 != 0) { // if scan was called in action function
+        if (flyCounter % 2 == 0) { // if scan was called in action function
 
             if (reciever.overGround()) {
 
@@ -118,11 +119,9 @@ public class InterlacedScanner extends Decider{
     }
 
     public void checkForLandDecision() {
-        resetFlyCounter();
         if (reciever.facingGround()) {
             subState = 3;
             rangeToLand = reciever.getRange();
-            resetTurnCounter();
         }
         else {
             uTurnComplete = false;
