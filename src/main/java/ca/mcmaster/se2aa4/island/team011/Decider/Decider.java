@@ -1,6 +1,5 @@
 package ca.mcmaster.se2aa4.island.team011.Decider;
 
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -19,65 +18,54 @@ public class Decider {
     protected int subState = 0;
     protected int counter = 0;
 
-    protected boolean foundLand = false;
-    protected boolean onLand = false;
-    protected boolean foundSite = false;
-
-    // Flag to track if decision is already made
-    protected boolean decisionMade = false;
-
     private FindIsland findIsland = null;
     private InterlacedScanner interlacedScanner = null;
 
-    public Decider(Drone drone, Reciever reciever) {
+    public Decider(Drone drone, Reciever reciever) { // initialize with drone and reciever
         this.drone = drone;
         this.reciever = reciever;
     }
 
     // handles all actions
     public void action() {
-        if (findIsland == null) {
+        if (findIsland == null) { // instantiate findIsland if null
             findIsland = new FindIsland(drone, reciever);
         }
-        if (state == 0) {
+
+        if (state == 0) { // State 0: Finds island | Uses FindIsland class
             findIsland.action();
         }
-        else if (state == 1) {
+        else if (state == 1) { // State 1: Finds site and creeks | Uses InterlacedScanner class
             interlacedScanner.action();
         }
     }
 
-    // handles all decisions and state changes
+    // handles all decisions and state changes for the actions
     public void decision() {
-        if (state == 0) {
+        if (state == 0) { // State 0: Finds island | Uses FindIsland class
             findIsland.decision();
-            if (findIsland.getIslandFound()) {
+
+            if (findIsland.getIslandFound()) { // if isLand found, go to State 1
                 state = 1;
-                createInterlacedScanner();
+                createInterlacedScanner(); // instantiate interlacedScanner
             }
         }
-        else if (state == 1) {
+        else if (state == 1) { // State 1: Finds site and creeks | Uses InterlacedScanner class
             interlacedScanner.decision();
         }
     }
 
+    // interlacedScanner instance creation
     public void createInterlacedScanner() {
         interlacedScanner = new InterlacedScanner(drone, reciever);
         logger.debug("Interlaced Scanner created");
     }
+    // reset subState to 0
     public void resetSubState() {
         subState = 0;
     }
-
+    // reset counter to 0
     public void resetCounter() {
         counter = 0;
-    }
-
-    public Drone getDroneInstance() {
-        return drone;
-    }
-
-    public Reciever getRecieverInstance() {
-        return reciever;
     }
 }

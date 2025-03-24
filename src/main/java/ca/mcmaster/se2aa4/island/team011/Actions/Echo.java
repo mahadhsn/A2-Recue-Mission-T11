@@ -3,7 +3,7 @@ package ca.mcmaster.se2aa4.island.team011.Actions;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 import org.json.JSONObject;
 
-// Echo action extends Action
+// Sets up JSONObject for Echo action depending on direction
 public class Echo extends Action {
     JSONObject parameter; // parameter for the echo action
     

@@ -3,9 +3,9 @@ package ca.mcmaster.se2aa4.island.team011.Actions;
 import ca.mcmaster.se2aa4.island.team011.Coordinates.Direction;
 import org.json.JSONObject;
 
-// Heading action extends Action
+// Sets up JSONObject for Heading action depending on direction
 public class Heading extends Action {
-    private JSONObject parameter; // parameter for the heading action
+    private final JSONObject parameter; // parameter for the heading action
 
     public Heading() {
         parameter = new JSONObject(); // create a new JSON object for the parameter
