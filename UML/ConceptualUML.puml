@@ -1,0 +1,63 @@
+@startuml
+
+package Coordinates {
+    enum Direction {
+    }
+    class Position {
+    }
+}
+
+package Drones {
+    interface BatteryTrackListener {
+    }
+
+    class BatteryTracker {
+    }
+    
+    class Drone {
+    }
+}
+
+package Deciders {
+    class Decider {
+    }
+    
+    class FindIsland extends Decider {
+    }
+    
+    class InterlacedScanner extends Decider {
+    }
+}
+
+package Map {
+    class POI {
+    }
+}
+
+class Explorer {
+}
+
+class Reciever {
+}
+
+class Runner {
+}
+
+BatteryTracker --> BatteryTrackListener
+
+Explorer *-up-> Drone
+Explorer *-up-> BatteryTracker
+Explorer *-up-> Reciever
+Explorer *-up-> POI
+
+Decider .up-> Drone
+Decider .up-> Reciever
+
+Drone *-up-> Position  
+Drone .up-> Direction 
+Position *-up-> Direction  
+
+Reciever <|-- POI
+Runner --> Explorer
+
+@enduml
